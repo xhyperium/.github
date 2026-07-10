@@ -115,11 +115,11 @@
 
 | 模块 | 职责 | 版本 |
 | --- | --- | --- |
-| [decimalx](https://github.com/ZoneCNH/decimalx) | 高精度十进制（Decimal/Price/Qty/Ratio/Money） | `v1.0.0` |
-| [domainx](https://github.com/ZoneCNH/domainx) | 领域共享值对象（Order/Position/Trade/Portfolio） | `v1.0.1` |
-| [domain_market](https://github.com/ZoneCNH/domain_market) | 市场数据域模型（Tick/Quote/Bar/OrderBook） | `v1.1.0` |
-| [domain_macro](https://github.com/ZoneCNH/domain_macro) | 宏观经济模型（MacroPoint/MacroState、no-lookahead） | `v1.0.1` |
-| [domain_exchange](https://github.com/ZoneCNH/domain_exchange) | 交易域模型（VenueAdapter 13 方法 SPI） | `v1.0.0` |
+| [decimalx](https://github.com/xhyperium/decimalx) | 高精度十进制（Decimal/Price/Qty/Ratio/Money） | `v1.0.0` |
+| [domainx](https://github.com/xhyperium/domainx) | 领域共享值对象（Order/Position/Trade/Portfolio） | `v1.0.1` |
+| [domain_market](https://github.com/xhyperium/domain_market) | 市场数据域模型（Tick/Quote/Bar/OrderBook） | `v1.1.0` |
+| [domain_macro](https://github.com/xhyperium/domain_macro) | 宏观经济模型（MacroPoint/MacroState、no-lookahead） | `v1.0.1` |
+| [domain_exchange](https://github.com/xhyperium/domain_exchange) | 交易域模型（VenueAdapter 13 方法 SPI） | `v1.0.0` |
 
 <br />
 
