@@ -88,26 +88,26 @@
 
 | 模块 | 职责 | 版本 |
 | --- | --- | --- |
-| [kernel](https://github.com/ZoneCNH/kernel) | L0 标准库原语（error/time/context/lifecycle/health/sync） | `v1.1.0` |
-| [configx](https://github.com/ZoneCNH/configx) | 显式配置加载、多源合并、SecretString 脱敏、热更新回滚 | `v1.1.0` |
-| [observex](https://github.com/ZoneCNH/observex) | vendor-neutral 日志/指标/追踪/健康/脱敏契约 | `v0.3.4` |
-| [resiliencx](https://github.com/ZoneCNH/resiliencx) | 运行时弹性（timeout/retry/circuit/bulkhead/rate/fallback） | `v1.0.2` |
-| [schedulex](https://github.com/ZoneCNH/schedulex) | 任务调度（cron/interval/delay、Overlap/Misfire 策略） | `v1.0.0` |
-| [bootstrap](https://github.com/ZoneCNH/bootstrap) | L1 进程组装层（7 存储 adapter 可选构造） | `v0.2.0` |
-| [testkitx](https://github.com/ZoneCNH/testkitx) | 测试专用 evidence/golden/fixture/boundary | `v1.0.0` |
-| [redisx](https://github.com/ZoneCNH/redisx) | Redis L2 adapter · *live* | `v1.1.1` |
-| [kafkax](https://github.com/ZoneCNH/kafkax) | Kafka L2 adapter · *live* | `v1.1.0` |
-| [natsx](https://github.com/ZoneCNH/natsx) | NATS L2 adapter（Core + JetStream）· *live* | `v1.0.4` |
-| [postgresx](https://github.com/ZoneCNH/postgresx) | PostgreSQL L2 adapter · *live* | `v1.1.2` |
-| [taosx](https://github.com/ZoneCNH/taosx) | TDengine L2 adapter · *live* | `v1.0.2` |
-| [ossx](https://github.com/ZoneCNH/ossx) | Aliyun OSS 对象存储 L2 adapter · *live* | `v1.2.0` |
-| [clickhousex](https://github.com/ZoneCNH/clickhousex) | ClickHouse OLAP L2 adapter · *live* | `v1.0.9` |
-| [contracts](https://github.com/ZoneCNH/contracts) | 跨域稳定端口、事件协议与 DTO 契约 | `v0.4.7` |
-| [transportx](https://github.com/ZoneCNH/transportx) | 应用通信底座（Envelope/RPC/EventBus/Outbox） | `v1.1.1-spec` |
-| [xlib_standard](https://github.com/ZoneCNH/xlib_standard) | 标准事实源 · Go Reference Template | `v1.0.1` |
-| [xlib_harness](https://github.com/ZoneCNH/xlib_harness) | 模块生成器与门禁执行器 | `v0.1.6` |
-| [xlib_evidence](https://github.com/ZoneCNH/xlib_evidence) | 证据收集与发布运行时 | `v0.2.4` |
-| [xlibgate](https://github.com/ZoneCNH/xlibgate) | import / go.mod / baseline / release 机器门禁 | `v1.0.0` |
+| [kernel](https://github.com/xhyperium/kernel) | L0 标准库原语（error/time/context/lifecycle/health/sync） | `v1.1.0` |
+| [configx](https://github.com/xhyperium/configx) | 显式配置加载、多源合并、SecretString 脱敏、热更新回滚 | `v1.1.0` |
+| [observex](https://github.com/xhyperium/observex) | vendor-neutral 日志/指标/追踪/健康/脱敏契约 | `v0.3.4` |
+| [resiliencx](https://github.com/xhyperium/resiliencx) | 运行时弹性（timeout/retry/circuit/bulkhead/rate/fallback） | `v1.0.2` |
+| [schedulex](https://github.com/xhyperium/schedulex) | 任务调度（cron/interval/delay、Overlap/Misfire 策略） | `v1.0.0` |
+| [bootstrap](https://github.com/xhyperium/bootstrap) | L1 进程组装层（7 存储 adapter 可选构造） | `v0.2.0` |
+| [testkitx](https://github.com/xhyperium/testkitx) | 测试专用 evidence/golden/fixture/boundary | `v1.0.0` |
+| [redisx](https://github.com/xhyperium/redisx) | Redis L2 adapter · *live* | `v1.1.1` |
+| [kafkax](https://github.com/xhyperium/kafkax) | Kafka L2 adapter · *live* | `v1.1.0` |
+| [natsx](https://github.com/xhyperium/natsx) | NATS L2 adapter（Core + JetStream）· *live* | `v1.0.4` |
+| [postgresx](https://github.com/xhyperium/postgresx) | PostgreSQL L2 adapter · *live* | `v1.1.2` |
+| [taosx](https://github.com/xhyperium/taosx) | TDengine L2 adapter · *live* | `v1.0.2` |
+| [ossx](https://github.com/xhyperium/ossx) | Aliyun OSS 对象存储 L2 adapter · *live* | `v1.2.0` |
+| [clickhousex](https://github.com/xhyperium/clickhousex) | ClickHouse OLAP L2 adapter · *live* | `v1.0.9` |
+| [contracts](https://github.com/xhyperium/contracts) | 跨域稳定端口、事件协议与 DTO 契约 | `v0.4.7` |
+| [transportx](https://github.com/xhyperium/transportx) | 应用通信底座（Envelope/RPC/EventBus/Outbox） | `v1.1.1-spec` |
+| [xlib_standard](https://github.com/xhyperium/xlib_standard) | 标准事实源 · Go Reference Template | `v1.0.1` |
+| [xlib_harness](https://github.com/xhyperium/xlib_harness) | 模块生成器与门禁执行器 | `v0.1.6` |
+| [xlib_evidence](https://github.com/xhyperium/xlib_evidence) | 证据收集与发布运行时 | `v0.2.4` |
+| [xlibgate](https://github.com/xhyperium/xlibgate) | import / go.mod / baseline / release 机器门禁 | `v1.0.0` |
 
 <br />
 
