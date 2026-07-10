@@ -238,8 +238,8 @@
 
 <div align="center">
 
-<img src="https://github-readme-stats.vercel.app/api?username=ZoneCNH&show_icons=true&theme=transparent&hide_border=true&card_width=320" alt="stats" />
-<img src="https://github-readme-stats.vercel.app/api/top-langs/?username=ZoneCNH&layout=compact&theme=transparent&hide_border=true&card_width=320" alt="top langs" />
+<img src="https://github-readme-stats.vercel.app/api?username=xhyperium&show_icons=true&theme=transparent&hide_border=true&card_width=320" alt="stats" />
+<img src="https://github-readme-stats.vercel.app/api/top-langs/?username=xhyperium&layout=compact&theme=transparent&hide_border=true&card_width=320" alt="top langs" />
 
 <br /><br />
 
