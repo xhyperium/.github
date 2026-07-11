@@ -1,0 +1,15 @@
+name: "xhyperium CodeQL configuration"
+version: 2
+
+# Disable default queries — repos define queries in their own codeql.yml
+disable-default-queries: false
+
+# Path filters to exclude vendored and generated code
+paths-ignore:
+  - "**/*_test.go"
+  - "vendor/**"
+  - ".worktree/**"
+  - ".omx/**"
+
+queries:
+  - uses: security-and-quality
