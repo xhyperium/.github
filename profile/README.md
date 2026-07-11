@@ -131,7 +131,7 @@
 | 模块 | 说明 |
 | --- | --- |
 | [market_data](https://github.com/ZoneCNH/market_data) | 下游分发端口：校验 / 幂等 / 排序 / 分发 |
-| [binance](https://github.com/ZoneCNH/binance) | Binance · Spot / USDⓈ-M / COIN-M / Options · **production** |
+| [binance](https://github.com/xhyperium/binance) | Binance · Spot / USDⓈ-M / COIN-M / Options · **production** |
 | [okx](https://github.com/ZoneCNH/okx) · [bybit](https://github.com/ZoneCNH/bybit) · [bitget](https://github.com/ZoneCNH/bitget) | OKX · Bybit · Bitget |
 | [kucoin](https://github.com/ZoneCNH/kucoin) · [gate](https://github.com/ZoneCNH/gate) · [mexc](https://github.com/ZoneCNH/mexc) | KuCoin · Gate.io · MEXC |
 | [htx](https://github.com/ZoneCNH/htx) · [coinbase](https://github.com/ZoneCNH/coinbase) · [upbit](https://github.com/ZoneCNH/upbit) | HTX · Coinbase · Upbit |
