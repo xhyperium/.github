@@ -1,0 +1,105 @@
+# xhyperium Standard CI — P1 标准门禁
+#
+# 用法（模块仓库 `.github/workflows/ci.yml`）：
+#   jobs:
+#     ci:
+#       uses: xhyperium/.github/.github/workflows/ci-standard.yml@main
+#
+# 适用：L2.5 领域共享层 / 业务域模块 / library
+# Gate: 轻量级（build + test + vet + lint + xlibgate trust）
+# 约束：self-hosted runner 必须已在 xhyperium org 注册
+
+name: CI — Standard (P1)
+
+on:
+  workflow_call:
+    inputs:
+      go_version:
+        description: 'Go version'
+        type: string
+        default: '1.26.5'
+      coverage_threshold:
+        description: '最低覆盖率百分比'
+        type: number
+        default: 60
+      runs_on:
+        description: 'Runner label'
+        type: string
+        default: 'ubuntu-latest'
+
+jobs:
+  ci:
+    name: Standard CI
+    runs-on: ${{ inputs.runs_on }}
+    env:
+      GO_VERSION: ${{ inputs.go_version }}
+      GOTOOLCHAIN: local
+      CGO_ENABLED: '0'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+
+      - name: go mod tidy (preflight)
+        run: |
+          go mod tidy -diff
+          if [ $? -ne 0 ]; then
+            echo "::error::go.mod or go.sum is out of sync — run 'go mod tidy'"
+            exit 1
+          fi
+
+      - name: gofmt
+        run: |
+          unformatted=$(gofmt -l . 2>/dev/null)
+          if [ -n "$unformatted" ]; then
+            echo "::error::Files not gofmt'd:"
+            echo "$unformatted"
+            exit 1
+          fi
+
+      - name: go build
+        run: go build ./...
+
+      - name: go test (coverage)
+        run: |
+          go test -coverprofile=coverage.out -covermode=atomic ./...
+
+      - name: Coverage gate
+        env:
+          THRESHOLD: ${{ inputs.coverage_threshold }}
+        run: |
+          if [ ! -f coverage.out ]; then
+            echo "::error::coverage.out not found"
+            exit 1
+          fi
+          total=$(go tool cover -func=coverage.out | grep total | awk '{print $3}' | sed 's/%//')
+          if [ -z "$total" ]; then
+            echo "::error::Could not parse coverage total"
+            exit 1
+          fi
+          echo "Coverage: ${total}% (threshold: ${THRESHOLD}%)"
+          if (( $(echo "$total < $THRESHOLD" | bc -l) )); then
+            echo "::error::Coverage ${total}% below threshold ${THRESHOLD}%"
+            exit 1
+          fi
+
+      - name: go vet
+        run: go vet ./...
+
+      - name: golangci-lint (error only)
+        uses: golangci/golangci-lint-action@v6
+        with:
+          version: latest
+          args: --timeout=5m --issues-exit-code=0
+
+      - name: xlibgate — trust check
+        run: |
+          go install github.com/ZoneCNH/xlibgate/cmd/xlibgate@v1.0.2
+          xlibgate trust
