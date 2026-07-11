@@ -1,13 +1,52 @@
 # xhyperium Foundation CI — P0 完整门禁
 #
-# 用法（模块仓库 `.github/workflows/ci.yml`）：
-#   jobs:
-#     ci:
-#       uses: xhyperium/.github/.github/workflows/ci-foundation.yml@main
-#
-# 适用：基座 Foundation 模块（kernel, configx, redisx, etc.）
+# 适用：基座 Foundation 模块（kernel, configx, redisx, 等 20 模块）
 # Gate: xlibgate check + trust 三组门禁
 # 约束：self-hosted runner 必须已在 xhyperium org 注册
+#
+# ────────────────────────────────────────────
+# 用法（模块仓库 `.github/workflows/ci.yml`）
+# ────────────────────────────────────────────
+#
+#   基本用法（全部使用默认值）：
+#
+#     jobs:
+#       ci:
+#         uses: xhyperium/.github/.github/workflows/ci-foundation.yml@main
+#
+#   自定义参数：
+#
+#     jobs:
+#       ci:
+#         uses: xhyperium/.github/.github/workflows/ci-foundation.yml@main
+#         with:
+#           go_version: '1.26.5'        # Go 工具链版本
+#           coverage_threshold: 80      # 全局覆盖率最低门禁（0–100）
+#           runs_on: ubuntu-latest      # Runner 标签（生产须切换 self-hosted）
+#           enable_govulncheck: false   # 安全漏洞扫描（默认关闭，符合 §9.4）
+#
+# ────────────────────────────────────────────
+# 输入参数
+# ────────────────────────────────────────────
+# go_version           Go 工具链版本号（semver）。字符串，默认 "1.26.5"。
+#                      运行时通过 GOTOOLCHAIN=local 锁定此版本，不自动下载。
+#
+# coverage_threshold   全局代码覆盖率最低百分比（0–100）。数字，默认 80。
+#                      低于此值 CI 失败。计算来源：go tool cover -func 的
+#                      total 行。对纯 library 模块建议 80+；对含 main
+#                      入口的模块可适当降低。
+#
+# runs_on              GitHub Actions runner 标签。字符串，默认 "ubuntu-latest"。
+#                      ⚠ 生产环境必须切换为 self-hosted runner：
+#                        - Foundation P0: [self-hosted, Linux, X64, ci-governance]
+#                        - Standard P1:   [self-hosted, Linux, X64, ci-go]
+#                      默认值仅用于初始接入验证，不得长期使用 GitHub-hosted。
+#
+# enable_govulncheck   是否启用 govulncheck 安全漏洞扫描。布尔，默认 false。
+#                      CI 步骤名 "govulncheck" 仅在 true 时执行。
+#                      符合 CONSTITUTION §9.4 — XLIB_ENABLE_VULNCHECK=1
+#                      按需启用。
+# ────────────────────────────────────────────
 
 name: CI — Foundation (P0)
 
@@ -15,17 +54,21 @@ on:
   workflow_call:
     inputs:
       go_version:
-        description: 'Go version'
+        description: 'Go toolchain version (semver, e.g. 1.26.5)'
         type: string
         default: '1.26.5'
       coverage_threshold:
-        description: '最低覆盖率百分比'
+        description: 'Minimum global coverage percentage (0–100, default 80)'
         type: number
         default: 80
       runs_on:
-        description: 'Runner label'
+        description: 'Runner label — production must use self-hosted, ubuntu-latest for onboarding only'
         type: string
         default: 'ubuntu-latest'
+      enable_govulncheck:
+        description: 'Opt-in security vulnerability scan (default false, per §9.4)'
+        type: boolean
+        default: false
 
 jobs:
   ci:
