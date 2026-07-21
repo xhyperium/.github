@@ -1,0 +1,96 @@
+# xhyperium Rust Standard CI — P1 标准门禁
+#
+# 适用：一般 Rust crate / library workspace（domain 库、adapter 等）
+# Gate：fmt + clippy(-D warnings) + test
+#
+# ────────────────────────────────────────────
+# 用法（模块仓库 `.github/workflows/ci-rust.yml`）
+# ────────────────────────────────────────────
+#
+#   name: CI
+#   on:
+#     pull_request:
+#     push:
+#       branches: [main]
+#   jobs:
+#     ci:
+#       uses: xhyperium/.github/.github/workflows/ci-rust-standard.yml@main
+#
+#   自定义 MSRV / package 过滤：
+#
+#     jobs:
+#       ci:
+#         uses: xhyperium/.github/.github/workflows/ci-rust-standard.yml@main
+#         with:
+#           rust_toolchain: "1.85"
+#           cargo_packages: "-p kernel -p decimalx"
+#
+# org ruleset 可引用的 status check 名称：
+#   rust-fmt · rust-clippy · rust-test
+
+name: CI Rust Standard
+
+on:
+  workflow_call:
+    inputs:
+      rust_toolchain:
+        description: Rust toolchain（stable 或 MSRV 如 1.85）
+        type: string
+        default: "stable"
+      cargo_packages:
+        description: cargo package 过滤（如 -p kernel）；空 = 全 workspace
+        type: string
+        default: ""
+      runs_on:
+        description: GitHub-hosted runner label（字符串）
+        type: string
+        default: "ubuntu-latest"
+
+permissions:
+  contents: read
+
+jobs:
+  rust-fmt:
+    name: rust-fmt
+    runs-on: ${{ inputs.runs_on }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: 安装 Rust
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ inputs.rust_toolchain }}
+          components: rustfmt
+      - name: cargo fmt --check
+        run: cargo fmt --all -- --check
+
+  rust-clippy:
+    name: rust-clippy
+    runs-on: ${{ inputs.runs_on }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: 安装 Rust
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ inputs.rust_toolchain }}
+          components: clippy
+      - uses: Swatinem/rust-cache@v2
+      - name: cargo clippy
+        run: >
+          cargo clippy --workspace --all-targets --all-features
+          ${{ inputs.cargo_packages }}
+          -- -D warnings
+
+  rust-test:
+    name: rust-test
+    runs-on: ${{ inputs.runs_on }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: 安装 Rust
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ inputs.rust_toolchain }}
+      - uses: Swatinem/rust-cache@v2
+      - name: cargo test
+        run: >
+          cargo test --workspace --all-targets
+          ${{ inputs.cargo_packages }}
