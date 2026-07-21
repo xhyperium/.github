@@ -1,0 +1,89 @@
+# xhyperium Rust Foundation CI — P0 基座门禁
+#
+# 适用：基础设施 / 核心库 workspace（kernel、configx、infra.rs 等）
+# Gate：fmt + clippy(-D warnings) + test + cargo deny（若存在 deny.toml）
+#
+# 用法：
+#   jobs:
+#     ci:
+#       uses: xhyperium/.github/.github/workflows/ci-rust-foundation.yml@main
+#       with:
+#         rust_toolchain: "1.85"
+#         run_deny: true
+#
+# status checks：rust-fmt · rust-clippy · rust-test · rust-deny（可选）
+
+name: CI Rust Foundation
+
+on:
+  workflow_call:
+    inputs:
+      rust_toolchain:
+        type: string
+        default: "stable"
+      cargo_packages:
+        type: string
+        default: ""
+      runs_on:
+        type: string
+        default: "ubuntu-latest"
+      run_deny:
+        description: 是否运行 cargo deny（仓库需有 deny.toml）
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+jobs:
+  rust-fmt:
+    name: rust-fmt
+    runs-on: ${{ inputs.runs_on }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ inputs.rust_toolchain }}
+          components: rustfmt
+      - run: cargo fmt --all -- --check
+
+  rust-clippy:
+    name: rust-clippy
+    runs-on: ${{ inputs.runs_on }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ inputs.rust_toolchain }}
+          components: clippy
+      - uses: Swatinem/rust-cache@v2
+      - run: >
+          cargo clippy --workspace --all-targets --all-features
+          ${{ inputs.cargo_packages }}
+          -- -D warnings
+
+  rust-test:
+    name: rust-test
+    runs-on: ${{ inputs.runs_on }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ inputs.rust_toolchain }}
+      - uses: Swatinem/rust-cache@v2
+      - run: >
+          cargo test --workspace --all-targets
+          ${{ inputs.cargo_packages }}
+
+  rust-deny:
+    name: rust-deny
+    if: ${{ inputs.run_deny }}
+    runs-on: ${{ inputs.runs_on }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ inputs.rust_toolchain }}
+      - uses: EmbarkStudios/cargo-deny-action@v2
+        with:
+          command: check
