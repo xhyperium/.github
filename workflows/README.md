@@ -2,6 +2,18 @@
 
 本目录包含 xhyperium 组织共用的 CI 工作流模板。
 
+
+## 路径说明（强制）
+
+GitHub reusable workflow 的 `uses:` 路径必须是：
+
+```text
+{owner}/{repo}/.github/workflows/{filename}@{ref}
+```
+
+因此本仓**可调用源**位于 **`.github/workflows/`**（与顶层 `workflows/` 内容同步）。
+顶层 `workflows/` 便于浏览与文档链接；**改 workflow 时两边必须同改**，以免 `uses:` 与文档脱节。
+
 ## 体系总览
 
 | 工作流 | 语言 | Tier | Gates |
