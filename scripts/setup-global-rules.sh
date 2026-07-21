@@ -35,17 +35,20 @@ echo ""
 
 if [ -d "${ORG_CONFIG_DIR}/.git" ]; then
   echo -e "${YELLOW}🔄 更新组织配置...${NC}"
-  # 若旧目录指向 bytechainx，提示并切换 remote
   remote="$(git -C "${ORG_CONFIG_DIR}" remote get-url origin 2>/dev/null || true)"
   if [[ -n "${remote}" && "${remote}" != *xhyperium/.github* ]]; then
     echo -e "${YELLOW}⚠️  origin 当前为: ${remote}${NC}"
-    echo -e "${YELLOW}   将切换到 xhyperium/.github（用户要求 SSOT 复制到本 org）${NC}"
-    git -C "${ORG_CONFIG_DIR}" remote set-url origin "${REPO_URL}"
+    echo -e "${YELLOW}   历史目录与 xhyperium SSOT 分叉，将备份并重新克隆${NC}"
+    bak="${ORG_CONFIG_DIR}.bak.$(date +%Y%m%d%H%M%S)"
+    mv "${ORG_CONFIG_DIR}" "${bak}"
+    echo -e "${YELLOW}   已备份到 ${bak}${NC}"
+    git clone --quiet "${REPO_URL}" "${ORG_CONFIG_DIR}"
+  else
+    git -C "${ORG_CONFIG_DIR}" fetch --quiet origin
+    git -C "${ORG_CONFIG_DIR}" checkout main --quiet 2>/dev/null || true
+    git -C "${ORG_CONFIG_DIR}" pull --ff-only --quiet origin main 2>/dev/null || \
+      git -C "${ORG_CONFIG_DIR}" reset --hard origin/main --quiet
   fi
-  git -C "${ORG_CONFIG_DIR}" fetch --quiet origin
-  git -C "${ORG_CONFIG_DIR}" checkout main --quiet 2>/dev/null || true
-  git -C "${ORG_CONFIG_DIR}" pull --ff-only --quiet origin main || \
-    git -C "${ORG_CONFIG_DIR}" pull --quiet origin main
   echo -e "${GREEN}✅ 已更新到最新版本${NC}"
 else
   echo -e "${YELLOW}📥 克隆组织配置...${NC}"
