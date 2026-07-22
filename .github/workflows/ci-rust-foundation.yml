@@ -2,6 +2,7 @@
 #
 # 适用：基础设施 / 核心库 workspace（kernel、configx、infra.rs 等）
 # Gate：fmt + clippy(-D warnings) + test + cargo deny（可选）+ cargo doc（可选）
+#       + MSRV 构建检查（可选）+ 覆盖率/Codecov（可选）
 #
 # 用法：
 #   jobs:
@@ -11,8 +12,11 @@
 #         rust_toolchain: "1.85"
 #         run_deny: true
 #         run_doc: true
+#         run_msrv: true          # MSRV 构建检查（默认 1.85）
+#         msrv_toolchain: "1.85"
+#         run_coverage: true      # 覆盖率上传 Codecov（缺 token 不报错）
 #
-# status checks：rust-fmt · rust-clippy · rust-test · rust-deny · rust-doc
+# status checks：rust-fmt · rust-clippy · rust-test · rust-deny · rust-doc · rust-msrv · rust-coverage
 
 name: CI Rust Foundation
 
@@ -34,6 +38,18 @@ on:
         default: true
       run_doc:
         description: 是否运行 cargo doc（对齐 rulesets/rust/ci.md P0 文档门禁）
+        type: boolean
+        default: true
+      run_msrv:
+        description: 是否运行 MSRV（最低版本）构建检查
+        type: boolean
+        default: true
+      msrv_toolchain:
+        description: MSRV Rust 工具链版本（须 <= rust_toolchain）
+        type: string
+        default: "1.85"
+      run_coverage:
+        description: 是否运行覆盖率并上传 Codecov
         type: boolean
         default: true
 
@@ -123,3 +139,51 @@ jobs:
       - uses: EmbarkStudios/cargo-deny-action@v2
         with:
           command: check
+
+  rust-msrv:
+    name: rust-msrv
+    if: ${{ inputs.run_msrv }}
+    runs-on: ${{ inputs.runs_on }}
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: ${{ inputs.msrv_toolchain }}
+      - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: msrv-${{ inputs.msrv_toolchain }}
+      - name: cargo build (MSRV)
+        run: >
+          cargo build --workspace --all-features
+          ${{ inputs.cargo_packages }}
+
+  rust-coverage:
+    name: rust-coverage
+    if: ${{ inputs.run_coverage }}
+    runs-on: ${{ inputs.runs_on }}
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: ${{ inputs.rust_toolchain }}
+          components: llvm-tools-preview
+      - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: cov-${{ inputs.rust_toolchain }}
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-llvm-cov
+      - name: 生成覆盖率 (lcov)
+        run: >
+          cargo llvm-cov --workspace --all-features --lcov
+          ${{ inputs.cargo_packages }}
+          --output-path lcov.info
+      - name: 上传到 Codecov
+        uses: codecov/codecov-action@v7
+        with:
+          files: lcov.info
+          fail_ci_if_error: false
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
