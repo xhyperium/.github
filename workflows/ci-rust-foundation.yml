@@ -51,7 +51,7 @@ on:
       run_coverage:
         description: 是否运行覆盖率并上传 Codecov
         type: boolean
-        default: true
+        default: false
 
 permissions:
   contents: read
