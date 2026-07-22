@@ -23,7 +23,7 @@
 - 禁止把 "运行测试"、"lint 检查" 放进计划的 todo list
 - 验证是持续的、隐式的义务，不是可选的 checkbox
 - 声称代码完成前，**必须**先跑 test/build
-- 质量门禁是空气，不是任务：按语言执行（见 [agent-quality-gates.md](./agent-quality-gates.md)），禁止写死只跑 cargo
+- 质量门禁是空气，不是任务：以 [agent-quality-gates.md](./agent-quality-gates.md) 为准（组织默认 Rust：fmt + clippy + test）
 
 ## 4. 任务原子化（P1）
 
@@ -53,24 +53,6 @@
 
 ---
 
-## 与 OpenSpec 的映射
-
-```
-Cursor                OpenSpec
-─────                 ──────
-Discovery Pass   →    /brainstorming / Proposal
-Structured Plan  →    Tasks.md
-Execute + Track  →    /opsx apply
-Reconcile        →    /opsx verify → archive
-```
-
 ## 关键理念
 
-> 每个模块约束 Agent 的一个自由度，合在一起形成无死角的执行纪律。
-
-- `flow` 定义了「该做什么」
-- `todo_spec` 定义了「怎么拆分」
-- `status_update_spec` 定义了「怎么汇报」
-- `non_compliance` 定义了「违规怎么办」
-- `completion_spec` 定义了「什么算完成」
-- `summary_spec` 定义了「怎么收尾」
+> 每个模块约束 Agent 的一个自由度，合在一起形成无死角的执行纪律：说了就做、进度可见、验证隐式、任务原子、完成可对账。

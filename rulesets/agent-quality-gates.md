@@ -1,6 +1,6 @@
 # Agent 质量门禁
 
-> 适用范围：所有 Agent 会话  
+> 适用范围：所有 Agent 会话（xhyperium · 默认 Rust）  
 > 级别：P0（验证义务）  
 > 互补： [agent-discipline.md](./agent-discipline.md) · [agent-teams.md](./agent-teams.md) · [rust/RULES.md](./rust/RULES.md)
 

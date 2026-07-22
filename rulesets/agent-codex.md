@@ -1,24 +1,25 @@
 # Agent Codex 效率最大化规则
 
-> 适用范围：所有使用 Codex CLI 的 Agent 会话，所有项目
-> 级别：🔥 P0（强制）
-> 互补规则：[agent-model-routing.md](./agent-model-routing.md)（何时用 Codex）、[agent-teams.md](./agent-teams.md)（团队并行）
-> 定位：`agent-model-routing.md` 定义**何时**用 Codex，本文件定义**如何**高效用 Codex
+> 适用范围：**已使用 Codex CLI** 的 Agent 会话  
+> 级别：使用 Codex 时的操作规范（**P0 真红线**见安全/证据；流程项多为 P1）  
+> 互补规则：[agent-model-routing.md](./agent-model-routing.md)（何时用 / Solo 降级）、[agent-teams.md](./agent-teams.md)  
+> 定位：routing 定义**何时**用 Codex，本文件定义**如何**高效用 Codex  
+> **Solo 无 Codex**：本文件大部分条款不适用；见 routing 场景分档，不得因未用 Codex 判违宪
 
 ---
 
-## 1. 职责分工（P0 铁律）
+## 1. 职责分工（Codex 可用时）
 
-主 Agent 和 Codex CLI 的边界不可模糊：
+主 Agent 和 Codex CLI 的边界：
 
 | 阶段 | 执行者 | 产出 |
 |------|--------|------|
 | 规划 | 主 Agent | 任务列表 + 依赖图 + 验收标准 |
-| 编码 | **Codex CLI** | 代码变更 |
-| 审查 | **Codex CLI** | 审查报告（按模块拆分） |
-| 验证 | 主 Agent | 编译 + 测试 + 结果汇总 |
+| 编码 | **Codex CLI**（默认） | 代码变更 |
+| 审查 | 独立审查者（可 Codex 或另一 Agent） | 审查报告 |
+| 验证 | 主 Agent | 门禁 + 结果汇总 |
 
-- 主 Agent **禁止**直接编写生产代码（降级除外，见 [agent-model-routing.md](./agent-model-routing.md) §3）
+- 主 Agent 在 **Codex 可用且非 Solo** 时避免直接写生产代码（降级 / Solo 除外，见 routing）
 - Codex **禁止**变更需求、架构或验收标准
 
 ---

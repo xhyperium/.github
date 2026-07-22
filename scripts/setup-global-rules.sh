@@ -26,7 +26,7 @@ else
 fi
 
 echo -e "${BLUE}╔══════════════════════════════════════╗${NC}"
-echo -e "${BLUE}║  xhyperium 全局规则初始化 v1.3       ║${NC}"
+echo -e "${BLUE}║  xhyperium 全局规则初始化 v1.4       ║${NC}"
 echo -e "${BLUE}╚══════════════════════════════════════╝${NC}"
 echo ""
 echo -e "  SSOT: ${REPO_URL}"
@@ -77,9 +77,8 @@ link_rule() {
   fi
 }
 
-# 语言规范（存在才链；其它语言预留路径）
+# 语言规范
 link_rule "${ORG_CONFIG_DIR}/rulesets/rust/RULES.md" "${CLAUDE_RULES_DIR}/rust.md" "Rust 规则"
-link_rule "${ORG_CONFIG_DIR}/rulesets/python/RULES.md" "${CLAUDE_RULES_DIR}/python.md" "Python 规则"
 
 # 最高治理（宪法）
 link_rule "${ORG_CONFIG_DIR}/rulesets/agent-teams-constitution.md" \
@@ -88,7 +87,7 @@ link_rule "${ORG_CONFIG_DIR}/rulesets/agent-teams-constitution-appendix.md" \
   "${CLAUDE_RULES_DIR}/agent-teams-constitution-appendix.md" "Agent Teams 宪法附录"
 
 # Agent 纪律与工作流
-link_rule "${ORG_CONFIG_DIR}/rulesets/agent-quality-gates.md" "${CLAUDE_RULES_DIR}/agent-quality-gates.md" "跨语言质量门禁"
+link_rule "${ORG_CONFIG_DIR}/rulesets/agent-quality-gates.md" "${CLAUDE_RULES_DIR}/agent-quality-gates.md" "质量门禁"
 link_rule "${ORG_CONFIG_DIR}/rulesets/agent-discipline.md" "${CLAUDE_RULES_DIR}/agent-discipline.md" "Agent 执行纪律"
 link_rule "${ORG_CONFIG_DIR}/rulesets/agent-workflow.md" "${CLAUDE_RULES_DIR}/agent-workflow.md" "Agent 工作流编排"
 link_rule "${ORG_CONFIG_DIR}/rulesets/agent-safety.md" "${CLAUDE_RULES_DIR}/agent-safety.md" "Agent 安全护栏"
@@ -97,12 +96,16 @@ link_rule "${ORG_CONFIG_DIR}/rulesets/agent-teams.md" "${CLAUDE_RULES_DIR}/agent
 link_rule "${ORG_CONFIG_DIR}/rulesets/agent-codex.md" "${CLAUDE_RULES_DIR}/agent-codex.md" "Agent Codex"
 link_rule "${ORG_CONFIG_DIR}/rulesets/agent-model-routing.md" "${CLAUDE_RULES_DIR}/agent-model-routing.md" "Agent 模型路由"
 
-# 可选：专项 Rust 文档（便于按主题打开）
+# Rust 专题（按需打开；入口仍是 rust.md）
 link_rule "${ORG_CONFIG_DIR}/rulesets/rust/security.md" "${CLAUDE_RULES_DIR}/rust-security.md" "Rust security"
 link_rule "${ORG_CONFIG_DIR}/rulesets/rust/async-runtime.md" "${CLAUDE_RULES_DIR}/rust-async.md" "Rust async"
 link_rule "${ORG_CONFIG_DIR}/rulesets/rust/testing.md" "${CLAUDE_RULES_DIR}/rust-testing.md" "Rust testing"
 link_rule "${ORG_CONFIG_DIR}/rulesets/rust/ci.md" "${CLAUDE_RULES_DIR}/rust-ci.md" "Rust CI"
 link_rule "${ORG_CONFIG_DIR}/rulesets/rust/cheatsheet.md" "${CLAUDE_RULES_DIR}/rust-cheatsheet.md" "Rust cheatsheet"
+link_rule "${ORG_CONFIG_DIR}/rulesets/rust/api-design.md" "${CLAUDE_RULES_DIR}/rust-api-design.md" "Rust API design"
+link_rule "${ORG_CONFIG_DIR}/rulesets/rust/clippy.md" "${CLAUDE_RULES_DIR}/rust-clippy.md" "Rust clippy"
+link_rule "${ORG_CONFIG_DIR}/rulesets/rust/observability.md" "${CLAUDE_RULES_DIR}/rust-observability.md" "Rust observability"
+link_rule "${ORG_CONFIG_DIR}/rulesets/rust/release.md" "${CLAUDE_RULES_DIR}/rust-release.md" "Rust release"
 
 echo ""
 echo -e "${BLUE}📋 验证：${CLAUDE_RULES_DIR}${NC}"
