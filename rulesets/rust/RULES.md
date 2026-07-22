@@ -1,7 +1,7 @@
 # Rust 编码规范（完整版）
 
 > **效力**：组织下所有 Rust 项目的**全局标准规范（SSOT）**  
-> **版本**：2.1.1  
+> **版本**：2.1.2  
 > **语言**：人类可读文本强制中文（见 [language.md](../language.md)）  
 > **状态**：强制（P0 条款不可削弱；项目可加严）  
 > **位置（xhyperium SSOT）**：[`xhyperium/.github`](https://github.com/xhyperium/.github) → `rulesets/rust/`  
@@ -82,7 +82,19 @@ cargo test --workspace --all-features
 ```bash
 cargo doc --workspace --no-deps --all-features
 cargo deny check
+# workspace：scripts/check-workspace-deps.sh（R-DEP-004）
 ```
+
+### 3.1.1 落地矩阵（规范 P0 ≠ 平台必绑）
+
+| 检查 | 规范 | Org Ruleset 硬拦 | 说明 |
+|------|------|------------------|------|
+| fmt / clippy / test | **P0** | ✅ 白名单仓 | 任何实质 Rust 变更不可豁免 |
+| doc / deny | **P0**（库/有依赖推荐） | ❌ | 经 `ci-rust-foundation` 落地；原型可宪章暂缓 |
+| R-DEP-004 | **P0**（workspace） | ❌ | 用 [`check-workspace-deps.sh`](../../scripts/check-workspace-deps.sh) |
+
+完整四列表（含 standard vs foundation）：[ci.md §0](./ci.md)。  
+**禁止**把「规范写了 P0」误读成「GitHub 已对全 org 强制」。
 
 ### 3.2 工具链约定
 
@@ -208,6 +220,9 @@ crate/
 | **公共 API** | 永不泄漏实现细节 | 禁止直接返回 `String` / `anyhow::Error` |
 
 ### 7.2 硬性规则
+
+> **条款分工**：unwrap / expect / panic 的**编码主条款**在本表（R-ERR-*）。  
+> [security.md](./security.md) 的 **R-SEC-001** 引用本表，并补充安全视角（变相 panic、库路径 todo 等），**不重复定义**另一套标准。
 
 | ID | 规则 |
 |----|------|
@@ -341,6 +356,18 @@ anyhow = { version = "1.0", default-features = false }
 - [ ] 成员 `Cargo.toml` 无第三方 `version = "…"` 内联（path 依赖除外）  
 - [ ] 根表无重复语义依赖的双轨版本（如两套 HTTP 客户端无文档说明）  
 - [ ] feature 膨胀受控（R-DEP-006）：根表默认最小化，crate 按需叠加  
+- [ ] CI 或本地跑过 [`check-workspace-deps.sh`](../../scripts/check-workspace-deps.sh)（推荐）  
+
+### 9.2 单 crate（非 workspace）依赖纪律（P1）
+
+R-DEP-004 **仅对 Cargo workspace 强制**。单包仓库不适用 `workspace = true`，改为：
+
+| 要求 | 说明 |
+|------|------|
+| 版本钉死 | 直接依赖写明确 version（或兼容范围）；合并前 `Cargo.lock` 对应用/bin **入库**（R-SEC-009） |
+| 新增依赖 | 仍走 R-DEP-001（原因 / 替代 / 维护状态）+ R-DEP-005（deny） |
+| 升级为 workspace | 一旦拆成多 crate，**必须**在同 PR 或紧随 PR 上收至 `[workspace.dependencies]` |
+| 检查脚本 | `check-workspace-deps.sh` 对非 workspace 根目录 **exit 0 并跳过**（打印提示） |
 
 ---
 
@@ -363,7 +390,7 @@ anyhow = { version = "1.0", default-features = false }
 
 | ID | 摘要 |
 |----|------|
-| R-SEC-001 | 非测试禁止 `unwrap` / 无注释 panic 路径 |
+| R-SEC-001 | 禁止失控 panic 路径（**主条款见 R-ERR-001~003**；安全补充见 [security.md](./security.md)） |
 | R-SEC-002 | `unsafe` 必须紧邻 `// SAFETY:` 说明不变量 |
 | R-SEC-003 | `async` 中禁止阻塞 I/O；必要时空 `spawn_blocking` |
 | R-SEC-004 | 默认 TLS 校验开启；禁止默认跳过证书验证 |
@@ -511,7 +538,8 @@ anyhow = { version = "1.0", default-features = false }
 | [observability.md](./observability.md) | tracing、指标、追踪 | 日志与排障 |
 | [release.md](./release.md) | SemVer、Feature、Changelog | 发版 / breaking |
 | [clippy.md](./clippy.md) | lint 分级与推荐属性 | 配置 CI lint |
-| [ci.md](./ci.md) | PR 门禁与工具矩阵 | 搭 CI |
+| [ci.md](./ci.md) | PR 门禁、落地矩阵、新仓接入 | 搭 CI / 接入 org ruleset |
+| [deny.template.toml](./deny.template.toml) | cargo-deny 组织起点模板 | 新建 deny.toml |
 | [cheatsheet.md](./cheatsheet.md) | 一页速查 | 日常编码 |
 
 ---

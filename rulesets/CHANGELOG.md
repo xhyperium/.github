@@ -5,6 +5,7 @@
 
 | 日期 | 摘要 |
 |------|------|
+| 2026-07-22 | **rust 2.1.2 执行缝补强**：ci.md 落地矩阵（规范/standard/foundation/Org Ruleset）；R-ERR 与 R-SEC-001 去重；§9.2 单 crate 依赖；`scripts/check-workspace-deps.sh`；`deny.template.toml`；新仓接入 checklist |
 | 2026-07-22 | **强制中文**：新增 `language.md`（P0）；rust RULES 2.1.1 对齐；setup 分发；取消默认英文/STE 交付 |
 | 2026-07-22 | 续：Teams/双审 Solo 分档；根 README 补 apply 运维闭环与维护约定 |
 | 2026-07-22 | Wave A–B 全量修复：README 与线上 active 对齐；document apply-org-ruleset；附录标题 v2.9；model-routing/codex solo 降级；去掉「跨语言」误导与 python 空链；setup 补全 rust 专题链接 |

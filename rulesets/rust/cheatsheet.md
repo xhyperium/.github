@@ -1,6 +1,6 @@
 # Rust 开发规范速查卡
 
-> 完整版：[RULES.md](./RULES.md) · 版本 2.1.1  
+> 完整版：[RULES.md](./RULES.md) · 版本 2.1.2  
 > 用途：日常编码一页纸；冲突以 RULES.md P0 为准
 
 ---
@@ -152,8 +152,20 @@ cargo test --workspace --all-features
 cargo nextest run --workspace
 cargo doc --workspace --no-deps --open
 cargo deny check
+# workspace 依赖引用（R-DEP-004）：
+# bash /path/to/xhyperium/.github/scripts/check-workspace-deps.sh
 cargo llvm-cov --workspace
 ```
+
+### 门禁落地（勿误解）
+
+| 检查 | 规范 | Org Ruleset 硬拦 |
+|------|------|------------------|
+| fmt / clippy / test | P0 | ✅ 白名单仓 |
+| doc / deny | P0（推荐） | ❌ 用 foundation |
+| R-DEP-004 | P0（workspace） | 脚本自接 |
+
+详见 [ci.md §0](./ci.md)。
 
 ---
 
@@ -169,4 +181,5 @@ cargo llvm-cov --workspace
 | 可观测 | [observability.md](./observability.md) |
 | 发布 | [release.md](./release.md) |
 | Clippy | [clippy.md](./clippy.md) |
-| CI | [ci.md](./ci.md) |
+| CI / 接入 | [ci.md](./ci.md) |
+| deny 模板 | [deny.template.toml](./deny.template.toml) |
