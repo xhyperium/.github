@@ -5,7 +5,8 @@
 >
 > **SSOT 位置（xhyperium）**：[`xhyperium/.github`](https://github.com/xhyperium/.github) → `rulesets/agent-teams-constitution.md`  
 > **附录**：[`agent-teams-constitution-appendix.md`](./agent-teams-constitution-appendix.md)（阈值 / ACL / 仲裁 / 变更日志）  
-> **分发**：`scripts/setup-global-rules.sh` → `~/.claude/rules/agent-teams-constitution.md`
+> **分发**：`scripts/setup-global-rules.sh` → `~/.claude/rules/agent-teams-constitution.md`  
+> **语言**：组织强制中文（见 [language.md](./language.md)）；Agent 对用户输出默认中文
 
 ## 文档定位
 

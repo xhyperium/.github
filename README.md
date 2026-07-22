@@ -7,7 +7,7 @@
 | 能力 | 说明 |
 |------|------|
 | **可复用 CI** | Rust 门禁工作流，模块仓 `uses:` 引用 |
-| **编码与 Agent 规范** | 协作宪法、Rust 规范、Agent 纪律与分发脚本 |
+| **编码与 Agent 规范** | 强制中文、协作宪法、Rust 规范、Agent 纪律与分发脚本 |
 | **治理模板** | 默认分支 / Tag / Rust PR 质量 ruleset JSON（active；应用见 apply 脚本） |
 | **组织首页** | `profile/README.md`（GitHub Org Profile） |
 | **安全基线** | 组织级 CodeQL 配置 |
@@ -33,8 +33,9 @@
 │   ├── ci-rust-*.yml             # 与 workflows/ 字节一致
 │   └── meta-validate.yml         # 本仓自检（非 reusable）
 ├── rulesets/
+│   ├── language.md                  # 强制中文（P0）
 │   ├── agent-teams-constitution.md  # 最高治理 C/L/P
-│   ├── agent-quality-gates.md       # 验证矩阵（Rust 为主）
+│   ├── agent-quality-gates.md       # 验证矩阵（Rust）
 │   ├── rust/                        # Rust 完整版 SSOT
 │   ├── agent-*.md                   # 纪律 / 工作流 / Teams …
 │   └── *.json                       # 分支 / tag / PR quality 模板
@@ -110,9 +111,10 @@ Rust status check 名称（供 org ruleset）：`rust-fmt` · `rust-clippy` · `
 
 | 路径 | 内容 |
 |------|------|
+| [rulesets/language.md](./rulesets/language.md) | **强制中文**（人类可读文本 P0） |
 | [rulesets/agent-teams-constitution.md](./rulesets/agent-teams-constitution.md) | Agent Teams 宪法（最高治理 C/L/P） |
-| [rulesets/agent-quality-gates.md](./rulesets/agent-quality-gates.md) | 验证命令矩阵（Rust 为主） |
-| [rulesets/rust/RULES.md](./rulesets/rust/RULES.md) | Rust 编码规范完整版 **v2.1.0**（P0 不可削弱） |
+| [rulesets/agent-quality-gates.md](./rulesets/agent-quality-gates.md) | 验证命令矩阵（Rust） |
+| [rulesets/rust/RULES.md](./rulesets/rust/RULES.md) | Rust 编码规范完整版 **v2.1.1**（P0 不可削弱） |
 | [rulesets/agent-*.md](./rulesets/) | 执行纪律、工作流、安全、Teams、Codex 等 |
 | [rulesets/*.json](./rulesets/) | Org Ruleset 配置（**active**；git 合并 ≠ 线上生效） |
 | [rulesets/CHANGELOG.md](./rulesets/CHANGELOG.md) | 规则变更时间线 |

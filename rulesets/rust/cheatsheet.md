@@ -1,6 +1,6 @@
 # Rust 开发规范速查卡
 
-> 完整版：[RULES.md](./RULES.md) · 版本 2.1.0  
+> 完整版：[RULES.md](./RULES.md) · 版本 2.1.1  
 > 用途：日常编码一页纸；冲突以 RULES.md P0 为准
 
 ---

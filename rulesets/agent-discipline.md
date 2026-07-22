@@ -1,7 +1,16 @@
 # Agent 执行纪律规则
 
-> 来源：Cursor `<non_compliance>` 机制分析 + 本组织实践
-> 适用范围：所有 Agent 会话（Claude Code / Codex / Gemini）
+> 来源：Cursor `<non_compliance>` 机制分析 + 本组织实践  
+> 适用范围：所有 Agent 会话（Claude Code / Codex / Gemini）  
+> 语言：对用户输出与落盘说明强制中文（见 [language.md](./language.md)）
+
+---
+
+## 0. 语言（P0）
+
+- 分析、进度、审查、总结、PR 描述：**简体中文**
+- 代码标识符/命令可英文；解释必须中文
+- 细则：[language.md](./language.md)
 
 ---
 

@@ -6,11 +6,12 @@
 
 ```text
 rulesets/
+├── language.md                           # 组织语言政策：强制中文（P0）
 ├── agent-teams-constitution.md           # 最高治理（C/L/P）v2.9
 ├── agent-teams-constitution-appendix.md  # 阈值 / ACL / 仲裁 / 变更日志 v2.9
 ├── agent-quality-gates.md                # 验证命令矩阵（Rust）
 ├── agent-*.md                            # 纪律 / 工作流 / 安全 / Teams / Codex …
-├── rust/                                 # Rust 全局规范完整版 v2.1.0
+├── rust/                                 # Rust 全局规范完整版 v2.1.1
 │   └── RULES.md                          # 入口
 ├── main-protection.json                  # 默认分支结构保护（active · ~ALL）
 ├── release-tag-protection.json           # v* tag 保护（active · ~ALL）
@@ -27,9 +28,11 @@ rulesets/
 ## 层级关系
 
 ```text
+language.md                     ← 人类可读文本：强制中文（P0）
+        ↓
 agent-teams-constitution.md     ← 最高原则 / 铁律 / 协作协议
         ↓
-语言 SSOT（rust/）              ← 编码标准
+语言编码 SSOT（rust/）          ← Rust 编码标准
         ↓
 agent-discipline / workflow …   ← 执行与工作流
         ↓
@@ -38,14 +41,22 @@ agent-quality-gates.md          ← 验证命令（Rust）
 GitHub Ruleset JSON             ← 平台强制（git 合并 ≠ 线上生效，需 apply）
 ```
 
-冲突时：**宪法 > 语言 P0 > Agent 操作规则 > 局部习惯**。
+冲突时：**语言政策 / 宪法 > 编码 P0 > Agent 操作规则 > 局部习惯**。
+
+## 0. 强制中文（P0）
+
+组织**强制**人类可读文本使用简体中文。细则：[language.md](./language.md)。
+
+- 文档、注释、用户可见错误、Agent 对用户输出、commit/PR 叙述 → **中文**
+- 标识符、crate 名、协议专有名、机器键名 → **可英文**（白名单见 language.md §2）
+- **不**把 ASD-STE100 / 全文英文文档作为默认交付
 
 ## 1. Rust 项目必须显式引用
 
 | 项 | 值 |
 |----|-----|
 | 上位 SSOT | `https://github.com/xhyperium/.github/tree/main/rulesets/rust` |
-| 入口 | `rulesets/rust/RULES.md`（v2.1.0） |
+| 入口 | `rulesets/rust/RULES.md`（v2.1.1） |
 | 关系 | 项目可加严，**不可削弱** P0 |
 
 ## 2. Agent 机器一键分发
@@ -114,7 +125,8 @@ bash scripts/apply-org-ruleset.sh rulesets/org-rust-pr-quality.ruleset.json -f
 ## 6. 维护检查清单
 
 - [ ] 改 P0 规则走 PR
-- [ ] Rust 专题版本头与 `RULES.md` 主版本一致（当前 2.1.0）
+- [ ] Rust 专题版本头与 `RULES.md` 主版本一致（当前 2.1.1）
+- [ ] 新增文档/规则使用中文（[language.md](./language.md)）
 - [ ] 改 ruleset JSON 后：PR 合并 **且** `apply-org-ruleset.sh`（若需线上生效）
 - [ ] 新 Rust 仓：CI + include + apply
 - [ ] 更新 `setup-global-rules.sh` / 本 README / [CHANGELOG.md](./CHANGELOG.md)
