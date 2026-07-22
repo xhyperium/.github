@@ -1,4 +1,5 @@
 {
+  "$schema_comment": "Org 级 release tag 保护（通用）。对 v* tag 禁止创建/删除/移动，仅 bypass actor 可操作。bypass 主体：OrganizationAdmin（始终）+ maintainers team（id 18459518，发版责任团队）。若改用其他 team：ai-pr-reviewers id=18566519，替换 actor_id 即可。注意 bypass 仅豁免本 ruleset 限制，team 仍需对目标仓库有 write 以上权限才能实际推送 tag。",
   "name": "release-tag-protection",
   "target": "tag",
   "enforcement": "active",
@@ -20,6 +21,11 @@
   "bypass_actors": [
     {
       "actor_type": "OrganizationAdmin",
+      "bypass_mode": "always"
+    },
+    {
+      "actor_type": "Team",
+      "actor_id": 18459518,
       "bypass_mode": "always"
     }
   ]

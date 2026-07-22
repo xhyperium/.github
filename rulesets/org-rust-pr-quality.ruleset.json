@@ -6,11 +6,11 @@
   "bypass_actors": [],
   "conditions": {
     "ref_name": {
-      "include": ["~DEFAULT_BRANCH", "refs/heads/main"],
+      "include": ["~DEFAULT_BRANCH"],
       "exclude": []
     },
     "repository_name": {
-      "include": ["*"],
+      "include": ["~ALL"],
       "exclude": [".github", ".github-private"]
     }
   },
