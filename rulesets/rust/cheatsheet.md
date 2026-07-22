@@ -1,6 +1,6 @@
 # Rust 开发规范速查卡
 
-> 完整版：[RULES.md](./RULES.md) · 版本 2.0.0  
+> 完整版：[RULES.md](./RULES.md) · 版本 2.1.0  
 > 用途：日常编码一页纸；冲突以 RULES.md P0 为准
 
 ---
@@ -19,6 +19,7 @@
 ❌ 硬编码密钥 / 日志打全量 token   → env + 脱敏
 ❌ pub use crate::*               → 显式导出
 ❌ 无 SAFETY 的 unsafe            → // SAFETY: 不变量
+❌ 成员内联钉第三方 version        → 根 [workspace.dependencies] + workspace = true
 ❌ 无说明 #[allow] / 跳过 CI      → 注释原因 / 门禁全绿
 ```
 
@@ -35,7 +36,35 @@
 ✅ 配置：结构体 + 校验 + fail-fast
 ✅ JoinHandle 有主人；关闭可优雅退出
 ✅ 敏感配置走 env / secret provider
+✅ 第三方依赖：根 [workspace.dependencies] + 成员 workspace = true
 ```
+
+---
+
+## 依赖（R-DEP-004）
+
+```toml
+# 根 Cargo.toml
+[workspace.dependencies]
+serde = { version = "1", features = ["derive"] }
+thiserror = "2"
+
+# 成员 crates/foo/Cargo.toml
+[dependencies]
+serde.workspace = true
+thiserror.workspace = true
+# 可叠加 feature，不写 version
+tokio = { workspace = true, features = ["macros"] }
+
+# path 依赖（工作区内）允许带 version，且须与目标 package 一致
+kernel = { path = "../kernel", version = "0.3.0" }
+```
+
+| 禁止 | 正确 |
+|------|------|
+| `serde = "1"` | `serde.workspace = true` |
+| `tokio = { version = "1", … }` | `tokio = { workspace = true, features = […] }` |
+| 成员各自钉版 | 先写入根表再引用 |
 
 ---
 

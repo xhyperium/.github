@@ -1,7 +1,7 @@
 # Rust 编码规范（完整版）
 
 > **效力**：组织下所有 Rust 项目的**全局标准规范（SSOT）**  
-> **版本**：2.0.0  
+> **版本**：2.1.0  
 > **状态**：强制（P0 条款不可削弱；项目可加严）  
 > **位置（xhyperium SSOT）**：[`xhyperium/.github`](https://github.com/xhyperium/.github) → `rulesets/rust/`  
 > **上游镜像来源**：[`bytechainx/.github`](https://github.com/bytechainx/.github) → `rulesets/rust/`（历史/跨 org 副本）  
@@ -186,8 +186,8 @@ crate/
 
 ### 6.3 Workspace
 
-- 共享依赖版本放 `[workspace.dependencies]`
-- 公共 lint 放 `[workspace.lints]`，成员 ` [lints] workspace = true`
+- 共享依赖版本放 `[workspace.dependencies]`；成员统一 `*.workspace = true` 引用（见 **§9.1 / R-DEP-004**）
+- 公共 lint 放 `[workspace.lints]`，成员 `[lints] workspace = true`
 - 包元数据（edition / license / rust-version）尽量 workspace 继承
 - **禁止** crate 间循环依赖
 
@@ -276,12 +276,67 @@ let raw = std::fs::read_to_string(path).unwrap();
 | R-DEP-001 | 新增依赖必须说明：原因、替代方案、维护状态 | P1 |
 | R-DEP-002 | 能用标准库则不用第三方 | P1 |
 | R-DEP-003 | `Cargo.toml` 依赖条目按字母序（或工具强制） | P2 |
-| R-DEP-004 | 版本统一走 `[workspace.dependencies]` | P0（workspace 项目） |
+| R-DEP-004 | **统一依赖引用**：第三方依赖版本与默认 feature 集中在根 `[workspace.dependencies]`；成员 crate **禁止**内联钉 `version`（细则 §9.1） | P0（workspace 项目） |
 | R-DEP-005 | 禁止引入未评估许可证的依赖；CI `cargo deny` | P0 |
 | R-DEP-006 | `default-features = false` 后按需开 feature，避免特性膨胀 | P1 |
 | R-DEP-007 | 禁止循环依赖 | P0 |
+| R-DEP-008 | 新增第三方依赖须先查 workspace 是否已有同名/等价条目；无则写入根再引用 | P1 |
 
 安全相关依赖策略见 [security.md](./security.md)。
+
+### 9.1 Workspace 依赖统一引用（R-DEP-004 细则 · P0）
+
+> **目标**：一处声明版本、处处 `workspace = true` 引用；消除「同依赖多版本 / 成员各自钉版」漂移。
+
+#### 强制模式
+
+1. **根** `Cargo.toml` 的 `[workspace.dependencies]` 声明第三方依赖的 **version** 与默认 **features**（及 `default-features`）。
+2. **成员** crate（含 `dev-dependencies` / `build-dependencies`）只通过 workspace 继承，不写版本号：
+
+```toml
+# 根 Cargo.toml
+[workspace.dependencies]
+serde = { version = "1", features = ["derive"] }
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "sync", "time"] }
+thiserror = "2"
+
+# 成员 crates/foo/Cargo.toml
+[dependencies]
+serde.workspace = true
+thiserror.workspace = true
+# 仅叠加本 crate 需要的 feature（不重复 version）
+tokio = { workspace = true, features = ["macros"] }
+```
+
+3. **禁止**在成员中出现以下绕过形式（path 依赖除外，见下）：
+
+```toml
+# ❌ 禁止
+serde = "1"
+tokio = { version = "1", features = ["macros"] }
+anyhow = { version = "1.0", default-features = false }
+```
+
+#### 允许例外
+
+| 例外 | 条件 |
+|------|------|
+| **工作区内 path 依赖** | `foo = { path = "../foo", version = "x.y.z" }`；`version` 须与目标 `[package].version` 一致（项目可另有 VERSIONING 加严） |
+| **单 crate 专属、确认无复用** | 可临时内联 version，**须在 PR 说明**，并在合理期限内提升到 `[workspace.dependencies]` |
+| **`[patch.crates-io]` / 本地调试** | 仅开发期；合并主干前须移除，或在项目文档显式声明并设消除期限 |
+
+#### 新增依赖流程（R-DEP-001 + R-DEP-008）
+
+1. 查根 `[workspace.dependencies]` 是否已有同名或功能等价依赖  
+2. 无则写入根表（版本、features、`default-features`），PR 说明原因与替代方案  
+3. 成员仅 `*.workspace = true` 或 `{ workspace = true, features = [...] }`  
+4. `cargo deny check`（及项目既有依赖门禁）通过  
+
+#### 审查检查点
+
+- [ ] 成员 `Cargo.toml` 无第三方 `version = "…"` 内联（path 依赖除外）  
+- [ ] 根表无重复语义依赖的双轨版本（如两套 HTTP 客户端无文档说明）  
+- [ ] feature 膨胀受控（R-DEP-006）：根表默认最小化，crate 按需叠加  
 
 ---
 
@@ -407,6 +462,7 @@ let raw = std::fs::read_to_string(path).unwrap();
 ❌ 日志/错误中输出完整 token / 密码 / 隐私数据
 ❌ pub use crate::* 扩散导出面
 ❌ 循环依赖 / 绕过 workspace 私自钉死分叉版本（无说明）
+❌ 成员 crate 内联钉第三方 version（绕过 `[workspace.dependencies]`，R-DEP-004）
 ❌ 无说明的 #[allow] 压制 lint
 ❌ 跳过 fmt / clippy / test 强行合并
 ```
@@ -424,6 +480,7 @@ let raw = std::fs::read_to_string(path).unwrap();
 ✅ 外部 I/O：timeout + 可观测 + 错误上下文
 ✅ JoinHandle / 子任务生命周期可解释
 ✅ 敏感配置走 env / secret provider
+✅ 第三方依赖：根 [workspace.dependencies] + 成员 workspace = true（R-DEP-004）
 ```
 
 ---
@@ -476,7 +533,9 @@ let raw = std::fs::read_to_string(path).unwrap();
 | 需要 panic | 仅启动期不变量 + `// PANIC:` |
 | 共享只读配置 | `Arc<Config>` |
 | 跨 await 状态 | 拆锁范围 / 消息传递，不持 guard |
-| 新依赖 | 先 std → 再 workspace 已有 → 再新增并说明 |
+| 新依赖 | 先 std → 再根 `[workspace.dependencies]` 已有 → 再写入根表并 `workspace = true` 引用（R-DEP-004/008） |
+| 成员 Cargo.toml | `serde.workspace = true`；**禁止** `serde = "1"` |
+| path 依赖 | `foo = { path = "…", version = "与目标 package 一致" }` |
 | 公开 enum | `#[non_exhaustive]` + 显式文档 |
 | 日志 | `tracing`，字段化，中文消息 + 英文 key |
 
