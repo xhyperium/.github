@@ -1,8 +1,8 @@
 {
-  "$schema_comment": "可选模板：对「已接入 ci-rust-*.yml」的仓库强制 rust-fmt/clippy/test。默认 enforcement=disabled，避免误导入后锁死文档/配置仓。启用前必须：(1) repository_name.include 为显式 Rust 仓名（禁止长期 ~ALL）；(2) status check 名与 job name 一致；(3) 先在单仓试验。Foundation 的 rust-doc/rust-deny 勿默认绑全 org。",
+  "$schema_comment": "Org 级 Rust PR quality 规则（线上 SSOT，由 scripts/apply-org-ruleset.sh 经 DELETE+POST 应用）。仅对显式列出的、已接入 ci-rust-*.yml 的仓库强制 rust-fmt/clippy/test，不采用 ~ALL。status check 名须与 ci-rust-foundation.yml / ci-rust-standard.yml 的 job name 一致。enforcement=active。未接入的仓库（standard_template.rs / xhyper.rs）及无 CI 的仓库（ssot / knowledge）不在本规则 scope 内，避免其合并被卡死。",
   "name": "Rust PR quality (fmt/clippy/test)",
   "target": "branch",
-  "enforcement": "disabled",
+  "enforcement": "active",
   "bypass_actors": [],
   "conditions": {
     "ref_name": {
@@ -10,32 +10,16 @@
       "exclude": []
     },
     "repository_name": {
-      "include": [
-        "infra.rs",
-        "market_data.rs",
-        "macro_data.rs",
-        "standard_template.rs",
-        "xhyper.rs"
-      ],
+      "include": ["infra.rs", "market_data.rs", "macro_data.rs"],
       "exclude": [".github", ".github-private"]
     }
   },
   "rules": [
     {
-      "type": "pull_request",
-      "parameters": {
-        "required_approving_review_count": 1,
-        "dismiss_stale_reviews_on_push": true,
-        "require_code_owner_review": false,
-        "require_last_push_approval": true,
-        "required_review_thread_resolution": true
-      }
-    },
-    {
       "type": "required_status_checks",
       "parameters": {
-        "strict_required_status_checks_policy": true,
-        "do_not_enforce_on_create": false,
+        "strict_required_status_checks_policy": false,
+        "do_not_enforce_on_create": true,
         "required_status_checks": [
           { "context": "rust-fmt" },
           { "context": "rust-clippy" },
