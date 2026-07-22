@@ -1,0 +1,66 @@
+# cargo-deny 组织模板（起点，非强制最终配置）
+#
+# 用法：
+#   1. 复制到目标仓库根目录：cp deny.template.toml deny.toml
+#   2. 按项目收紧 licenses / bans / 忽略 advisories
+#   3. 本地与 CI：cargo deny check
+#
+# 上位规则：rulesets/rust/security.md R-SEC-007/008 · rulesets/rust/ci.md §6
+# 版本：与 rust RULES 2.1.2 对齐
+
+[graph]
+# 检查所有 target；项目可收窄以加速
+all-features = true
+
+[advisories]
+# 漏洞 advisory 失败即阻断（R-SEC-008）
+yanked = "deny"
+# 临时忽略须带 reason + 期限，并在 PR 写明
+ignore = [
+  # { id = "RUSTSEC-XXXX-XXXX", reason = "…", # 消除期限: YYYY-MM-DD }
+]
+
+[licenses]
+# 组织默认宽松开源白名单；项目只可收紧，不可默默放宽到 copyleft 污染
+allow = [
+  "MIT",
+  "Apache-2.0",
+  "Apache-2.0 WITH LLVM-exception",
+  "BSD-2-Clause",
+  "BSD-3-Clause",
+  "ISC",
+  "Unicode-3.0",
+  "Unicode-DFS-2016",
+  "Zlib",
+  "CC0-1.0",
+  "Unlicense",
+  "OpenSSL",
+]
+confidence-threshold = 0.8
+# 特例包（尽量少用）
+exceptions = [
+  # { allow = ["MVL-2.0"], crate = "some-crate" },
+]
+
+[licenses.private]
+# 未发布的 workspace 私有 crate 跳过许可证检查
+ignore = true
+
+[bans]
+# 多版本：warn 便于发现漂移；项目可升 deny
+multiple-versions = "warn"
+wildcards = "deny"
+highlight = "all"
+# 禁止的 crate（示例，按需启用）
+deny = [
+  # { crate = "openssl-sys", reason = "统一 rustls" },
+]
+skip = []
+skip-tree = []
+
+[sources]
+unknown-registry = "deny"
+unknown-git = "deny"
+allow-registry = ["https://github.com/rust-lang/crates.io-index"]
+# 允许的 git 源（生产尽量钉 rev；空表示禁止未知 git）
+allow-git = []

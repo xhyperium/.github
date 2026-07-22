@@ -28,10 +28,12 @@ cargo test --workspace --all-features
 # Foundation / 库（推荐）
 # cargo doc --workspace --no-deps --all-features
 # cargo deny check   # 若存在 deny.toml
+# workspace：bash scripts/check-workspace-deps.sh  # R-DEP-004
 ```
 
 组织可复用 CI：`ci-rust-standard.yml`（P1）/ `ci-rust-foundation.yml`（P0）。  
-规范 SSOT：[rust/RULES.md](./rust/RULES.md)
+规范 SSOT：[rust/RULES.md](./rust/RULES.md)  
+**门禁落地真相表**（哪些是规范 P0、哪些是 Org 硬拦）：[rust/ci.md §0](./rust/ci.md)
 
 ### 文档 / 配置仓
 

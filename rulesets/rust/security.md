@@ -2,21 +2,23 @@
 
 > 适用范围：所有 Rust 项目  
 > 上位文档：[RULES.md](./RULES.md) §11  
-> 版本：2.1.1
+> 版本：2.1.2
 
 ---
 
 ## 1. Panic 与错误路径（P0）
 
-### R-SEC-001：禁止裸 unwrap / 失控 panic
+### R-SEC-001：禁止失控 panic（安全视角）
+
+> **主条款**：裸 `unwrap` / `expect` / 启动 `panic` 的编码规则以 [RULES.md](./RULES.md) **R-ERR-001 ~ R-ERR-003** 为准。  
+> 本条 **不另立冲突标准**；补充安全相关违规形态与库/应用矩阵，Review 时可同时引用 R-ERR-* 与 R-SEC-001。
 
 - **触发**：编写非测试 Rust 代码
-- **违规**：
-  - `.unwrap()`
-  - 无理由 `.expect()`
+- **在 R-ERR 之外额外关注的违规**：
   - `panic!` / `unreachable!` / `todo!` / `unimplemented!` 出现在库的可调用路径
   - `unwrap_or_else(|_| panic!(...))` 等变相 panic
-- **正确做法**：
+  - 错误路径 panic 导致 DoS / 任务被杀（async worker 中尤其危险）
+- **正确做法**（与 R-ERR 一致）：
   - 传播：`?`
   - 转换：`map_err` / `ok_or_else`
   - 可恢复默认：`unwrap_or` / `unwrap_or_else` / `unwrap_or_default`（默认值语义必须正确）
@@ -24,7 +26,7 @@
   | 场景 | 条件 |
   |------|------|
   | `#[cfg(test)]` / `tests/` | 可使用 unwrap/expect |
-  | 应用启动 fail-fast | `// PANIC: <不变量>` 注释 |
+  | 应用启动 fail-fast | `// PANIC: <不变量>` 注释（R-ERR-003） |
   | 静态永真不变量 | 优先 `debug_assert!`；release 仍需类型保证时文档化 |
 
 ### R-SEC-001a：库 vs 应用
@@ -34,6 +36,8 @@
 | 库 `src/` 公共/内部 API | ❌ | ❌ 默认 | ❌ 默认 |
 | 应用 `main` / 组合根启动 | ❌ | ⚪ 仅启动 + `// PANIC:` | ⚪ 同上 |
 | 测试 | ✅ | ✅ | ✅ |
+
+（矩阵与 R-ERR-001~003 一致；冲突时以 R-ERR 表为准。）
 
 ---
 

@@ -41,6 +41,8 @@
 │   └── *.json                       # 分支 / tag / PR quality 模板
 ├── scripts/
 │   ├── setup-global-rules.sh     # 规则一键分发 → ~/org-config + ~/.claude/rules
+│   ├── apply-org-ruleset.sh      # Org Ruleset JSON → 线上
+│   ├── check-workspace-deps.sh   # R-DEP-004 workspace 依赖引用检查
 │   └── sync-workflows.sh         # workflows/ ↔ .github/workflows/ 同步
 └── codeql/
     └── codeql-config.yml
@@ -114,7 +116,7 @@ Rust status check 名称（供 org ruleset）：`rust-fmt` · `rust-clippy` · `
 | [rulesets/language.md](./rulesets/language.md) | **强制中文**（人类可读文本 P0） |
 | [rulesets/agent-teams-constitution.md](./rulesets/agent-teams-constitution.md) | Agent Teams 宪法（最高治理 C/L/P） |
 | [rulesets/agent-quality-gates.md](./rulesets/agent-quality-gates.md) | 验证命令矩阵（Rust） |
-| [rulesets/rust/RULES.md](./rulesets/rust/RULES.md) | Rust 编码规范完整版 **v2.1.1**（P0 不可削弱） |
+| [rulesets/rust/RULES.md](./rulesets/rust/RULES.md) | Rust 编码规范完整版 **v2.1.2**（P0 不可削弱；落地矩阵见 [ci.md](./rulesets/rust/ci.md)） |
 | [rulesets/agent-*.md](./rulesets/) | 执行纪律、工作流、安全、Teams、Codex 等 |
 | [rulesets/*.json](./rulesets/) | Org Ruleset 配置（**active**；git 合并 ≠ 线上生效） |
 | [rulesets/CHANGELOG.md](./rulesets/CHANGELOG.md) | 规则变更时间线 |
