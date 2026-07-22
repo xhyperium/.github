@@ -1,7 +1,8 @@
 # Rust 编码规范（完整版）
 
 > **效力**：组织下所有 Rust 项目的**全局标准规范（SSOT）**  
-> **版本**：2.1.0  
+> **版本**：2.1.1  
+> **语言**：人类可读文本强制中文（见 [language.md](../language.md)）  
 > **状态**：强制（P0 条款不可削弱；项目可加严）  
 > **位置（xhyperium SSOT）**：[`xhyperium/.github`](https://github.com/xhyperium/.github) → `rulesets/rust/`  
 > **上游镜像来源**：[`bytechainx/.github`](https://github.com/bytechainx/.github) → `rulesets/rust/`（历史/跨 org 副本）  
@@ -52,14 +53,17 @@ Constitution / 组织铁律
 | 类别 | 要求 |
 |------|------|
 | 字符编码 | **UTF-8（无 BOM）**，换行 **LF** |
-| 代码注释（`//` `///` `//!`） | **中文** |
-| 用户可见错误（`Display` / 业务文案） | **中文** |
+| 代码注释（`//` `///` `//!`） | **中文**（强制） |
+| 用户可见错误（`Display` / 业务文案） | **中文**（强制） |
+| 设计/规格/README 等人类文档 | **中文**（强制，见 [language.md](../language.md)） |
 | 标识符 | 英文（Rust 惯例） |
 | 提交说明 | Conventional Commits：`type(scope): 中文说明` |
-| 英文技术交付文档 | 项目若采用 STE，从其宪章；本规范不复制词表 |
-| 技术术语 | 可保留 API / CI / crate / workspace 等英文本体 |
+| 技术术语 | 中文叙述 + 可保留 API / CI / crate / workspace 等英文本体 |
+| STE / 全文英文交付 | **非默认**；须书面豁免，见 [language.md](../language.md) §5 |
 
-禁止：GBK/UTF-16、提交 `U+FFFD`、对已是 UTF-8 的中文二次错误转码。
+禁止：GBK/UTF-16、提交 `U+FFFD`、对已是 UTF-8 的中文二次错误转码；**禁止**无豁免的英文全文技术文档作为默认交付。
+
+上位语言政策（组织全局）：[../language.md](../language.md)。
 
 ---
 

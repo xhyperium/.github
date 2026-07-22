@@ -1,7 +1,9 @@
 # Agent 工作流编排规则
 
 > 适用范围：所有 Agent 会话（Claude Code / Codex / Gemini）  
+> 语言：强制中文（见 [language.md](./language.md)）  
 > 互补规则：  
+> - [language.md](./language.md)（语言政策）  
 > - [agent-discipline.md](./agent-discipline.md)（执行纪律）  
 > - [agent-quality-gates.md](./agent-quality-gates.md)（质量门禁 · Rust）  
 > - [agent-teams-constitution.md](./agent-teams-constitution.md)（最高治理）  

@@ -26,7 +26,7 @@ else
 fi
 
 echo -e "${BLUE}╔══════════════════════════════════════╗${NC}"
-echo -e "${BLUE}║  xhyperium 全局规则初始化 v1.4       ║${NC}"
+echo -e "${BLUE}║  xhyperium 全局规则初始化 v1.5       ║${NC}"
 echo -e "${BLUE}╚══════════════════════════════════════╝${NC}"
 echo ""
 echo -e "  SSOT: ${REPO_URL}"
@@ -77,7 +77,8 @@ link_rule() {
   fi
 }
 
-# 语言规范
+# 语言政策（强制中文）+ 语言规范
+link_rule "${ORG_CONFIG_DIR}/rulesets/language.md" "${CLAUDE_RULES_DIR}/language.md" "语言政策（强制中文）"
 link_rule "${ORG_CONFIG_DIR}/rulesets/rust/RULES.md" "${CLAUDE_RULES_DIR}/rust.md" "Rust 规则"
 
 # 最高治理（宪法）

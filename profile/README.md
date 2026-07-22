@@ -7,7 +7,7 @@
 **FoundationX — 量化交易基础设施（Rust-first）**
 
 构建高性能、高可靠的金融数据与交易系统。  
-以 **Rust** 为默认实现语言，Goal 驱动、Spec 可追溯、规范与 CI 组织级统一。
+以 **Rust** 为默认实现语言；**人类可读文本强制中文**；Goal 驱动、Spec 可追溯、规范与 CI 组织级统一。
 
 <br />
 
@@ -94,6 +94,7 @@
 
 | 项 | 入口 |
 | --- | --- |
+| **语言政策** | [强制中文 language.md](https://github.com/xhyperium/.github/blob/main/rulesets/language.md) |
 | **Rust 编码规范** | [rulesets/rust/RULES.md](https://github.com/xhyperium/.github/blob/main/rulesets/rust/RULES.md) |
 | **可复用 CI** | `ci-rust-standard.yml` / `ci-rust-foundation.yml` |
 | **Agent 宪法** | [agent-teams-constitution.md](https://github.com/xhyperium/.github/blob/main/rulesets/agent-teams-constitution.md) |
