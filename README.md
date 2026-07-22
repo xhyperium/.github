@@ -114,9 +114,10 @@ Rust status check 名称（供 org ruleset）：`rust-fmt` · `rust-clippy` · `
 | [rulesets/agent-quality-gates.md](./rulesets/agent-quality-gates.md) | 验证命令矩阵（Rust 为主） |
 | [rulesets/rust/RULES.md](./rulesets/rust/RULES.md) | Rust 编码规范完整版 **v2.1.0**（P0 不可削弱） |
 | [rulesets/agent-*.md](./rulesets/) | 执行纪律、工作流、安全、Teams、Codex 等 |
-| [rulesets/*.json](./rulesets/) | 分支 / Tag / Rust PR 质量 ruleset **模板**（导入须谨慎） |
+| [rulesets/*.json](./rulesets/) | Org Ruleset 配置（**active**；git 合并 ≠ 线上生效） |
+| [rulesets/CHANGELOG.md](./rulesets/CHANGELOG.md) | 规则变更时间线 |
 
-说明与导入注意：[rulesets/README.md](./rulesets/README.md)
+说明、三 JSON 分工与 **apply 流程**：[rulesets/README.md](./rulesets/README.md)
 
 ### Agent 机器一键分发
 
@@ -128,6 +129,16 @@ USE_HTTPS=1 bash <(curl -sSL https://raw.githubusercontent.com/xhyperium/.github
 ```
 
 效果：克隆/更新 `~/org-config` → 将 `rulesets` 软链到 `~/.claude/rules/`。
+
+### 将 Ruleset 应用到 GitHub 组织（线上）
+
+```bash
+# 预览 / 执行（需 gh admin:org）
+bash scripts/apply-org-ruleset.sh rulesets/org-rust-pr-quality.ruleset.json --dry-run
+bash scripts/apply-org-ruleset.sh rulesets/org-rust-pr-quality.ruleset.json -f
+```
+
+详见 [rulesets/README.md §4](./rulesets/README.md)。
 
 ---
 
@@ -169,9 +180,10 @@ profile/README.md
 
 1. **不要在 `main` 直接改**；开分支 → PR → squash merge。
 2. **改 reusable workflow**：只编辑 `workflows/*.yml`，再 `bash scripts/sync-workflows.sh`，两边一起提交。
-3. **改规则**：更新 `rulesets/` 后，使用方 `cd ~/org-config && git pull` 或重跑 setup 脚本。
-4. **Ruleset JSON** 是模板，导入 GitHub Org Rules 前确认 status check 名与目标仓 CI 一致，避免锁死合并。
-5. 历史上游副本：`bytechainx/.github`；**xhyperium 以本仓为 SSOT**。
+3. **改规则 Markdown**：更新 `rulesets/` 后，使用方 `git pull ~/org-config` 或重跑 setup；更新 [CHANGELOG](./rulesets/CHANGELOG.md)。
+4. **改 Ruleset JSON**：PR 合并后，若需线上生效须跑 `scripts/apply-org-ruleset.sh`；新 Rust 仓 = CI + `include` + apply。
+5. **禁止**在 `main-protection` 硬编码不存在的 status check；**禁止** rust-pr 对 `~ALL`。
+6. 历史上游副本：`bytechainx/.github`；**xhyperium 以本仓为 SSOT**。
 
 ---
 

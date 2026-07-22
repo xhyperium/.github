@@ -284,21 +284,25 @@ Codex CLI 执行
 | 沙箱模式 | `--full-auto`（workspace-write），禁止 `danger-full-access` |
 | 密钥隔离 | prompt 中禁止包含 Token/Secret/Password |
 | 日志截断 | stdout ≤ 5000 字符，stderr ≤ 2000 字符 |
-| 命令白名单 | Worker 仅执行 [agent-quality-gates.md](./agent-quality-gates.md) 中对应语言的验证命令（及主 Agent 显式授权项） |
+| 命令白名单 | Worker 仅执行 [agent-quality-gates.md](./agent-quality-gates.md) 中的验证命令（及主 Agent 显式授权项） |
 | 越权禁止 | Codex 不得修改 CI 配置、部署脚本、密钥文件 |
 
 ---
 
-## 9. 双审协议（P0）
+## 9. 双审协议
 
-当变更涉及 ≥2 个文件或风险 ≥ P1 时，**必须**执行双审（Claude + Codex 独立审查）。
+> **P0 真红线**：实现者不得自批准（宪法 C-3 / ALL-F05）。  
+> **推荐（P1）**：多 Agent 或 Codex 可用时，对 substantial / 高风险变更做双审。  
+> **Solo**：主 Agent 交付时须在对话中展示 diff + 门禁证据 + 自述风险；有第二审查者时再落盘双审文件。
 
-### 9.1 双审流程
+当变更涉及 ≥2 个源码文件或风险 ≥ P1，且 **存在独立第二审查能力**（另一 Agent 或 Codex）时，**应**执行双审。
+
+### 9.1 双审流程（有第二审查者时）
 
 ```
 exec 完成
-    ├──► Claude 审查（review-claude.md）
-    └──► Codex 审查（review-codex.md）
+    ├──► 审查者 A（如主 Agent）→ review-a.md
+    └──► 审查者 B（如 Codex）  → review-b.md
               ↓ 两份齐全
          review-summary.md（综合结论）
               ↓ 若冲突
@@ -306,7 +310,7 @@ exec 完成
 ```
 
 - 两份 Review **必须独立生成**，禁止互相抄结论
-- 单审（仅 Codex review）仅允许用于：单文件变更 + 风险 P2 + 无架构影响
+- 单审允许：trivial 变更（附录 A）或 Solo 且已展示证据
 
 ### 9.2 单份 Review 结构要求
 
