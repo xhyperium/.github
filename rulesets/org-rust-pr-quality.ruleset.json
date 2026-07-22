@@ -1,5 +1,5 @@
 {
-  "$schema_comment": "可选模板：对「已接入 ci-rust-*.yml」的仓库强制 rust-fmt/clippy/test。默认 enforcement=disabled，避免误导入后锁死 Go/文档/非 Rust 仓。启用前必须：(1) 将 repository_name.include 改为显式 Rust 仓名列表（禁止长期 ~ALL）；(2) 确认 status check 名与 job name 一致；(3) 先在单仓试验再扩面。Foundation 的 rust-doc/rust-deny 勿默认绑全 org。",
+  "$schema_comment": "可选模板：对「已接入 ci-rust-*.yml」的仓库强制 rust-fmt/clippy/test。默认 enforcement=disabled，避免误导入后锁死文档/配置仓。启用前必须：(1) repository_name.include 为显式 Rust 仓名（禁止长期 ~ALL）；(2) status check 名与 job name 一致；(3) 先在单仓试验。Foundation 的 rust-doc/rust-deny 勿默认绑全 org。",
   "name": "Rust PR quality (fmt/clippy/test)",
   "target": "branch",
   "enforcement": "disabled",

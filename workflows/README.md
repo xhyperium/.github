@@ -1,7 +1,6 @@
 # xhyperium 可复用 CI Workflows
 
-本目录包含 xhyperium 组织共用的 CI 工作流模板。
-
+本目录包含 xhyperium 组织共用的 **Rust** CI 工作流模板。
 
 ## 路径说明（强制）
 
@@ -26,12 +25,8 @@ bash scripts/sync-workflows.sh
 
 | 工作流 | 语言 | Tier | Gates |
 |--------|------|------|-------|
-| `ci-foundation.yml` | **Go** | P0 | gofmt → build → vet → test(-race) → coverage → lint → xlibgate → gitleaks |
-| `ci-standard.yml` | **Go** | P1 | gofmt → build → test → coverage → vet → lint → xlibgate trust |
 | `ci-rust-foundation.yml` | **Rust** | P0 | fmt → clippy(-D) → test → doc（可选）→ cargo deny（可选） |
 | `ci-rust-standard.yml` | **Rust** | P1 | fmt → clippy(-D) → test |
-
-> Go 与 Rust **分开** 复用；Rust 仓库请用 `ci-rust-*`。
 
 ## Rust 模块接入
 
@@ -84,20 +79,6 @@ jobs:
 | `rust-test` | cargo test |
 | `rust-doc` | cargo doc（仅 foundation，`run_doc`） |
 | `rust-deny` | cargo deny（仅 foundation，`run_deny`） |
-
-## Go 模块接入
-
-见 `ci-foundation.yml` / `ci-standard.yml` 文件头。
-
-```yaml
-jobs:
-  ci:
-    uses: xhyperium/.github/.github/workflows/ci-foundation.yml@main
-    with:
-      go_version: "1.26.5"
-      # 模块迁移后可覆盖：
-      # xlibgate_module: "github.com/xhyperium/xlibgate/cmd/xlibgate@v1.0.2"
-```
 
 ## 规范引用
 
