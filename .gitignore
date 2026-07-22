@@ -1,0 +1,9 @@
+# Local git worktrees (agent / human isolation)
+.worktrees/
+
+# Editor / OS noise
+.DS_Store
+*.swp
+*~
+.idea/
+.vscode/

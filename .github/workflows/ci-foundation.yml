@@ -1,7 +1,7 @@
 # xhyperium Foundation CI — P0 完整门禁
 #
 # 适用：基座 Foundation 模块（kernel, configx, redisx, 等 20 模块）
-# Gate: xlibgate check + trust 三组门禁
+# Gate: gofmt → build → vet → test(-race) → coverage → lint → xlibgate → gitleaks
 # 约束：self-hosted runner 必须已在 xhyperium org 注册
 #
 # ────────────────────────────────────────────
@@ -24,6 +24,7 @@
 #           coverage_threshold: 80      # 全局覆盖率最低门禁（0–100）
 #           runs_on: ubuntu-latest      # Runner 标签（生产须切换 self-hosted）
 #           enable_govulncheck: false   # 安全漏洞扫描（默认关闭，符合 §9.4）
+#           xlibgate_module: 'github.com/ZoneCNH/xlibgate/cmd/xlibgate@v1.0.2'
 #
 # ────────────────────────────────────────────
 # 输入参数
@@ -46,6 +47,9 @@
 #                      CI 步骤名 "govulncheck" 仅在 true 时执行。
 #                      符合 CONSTITUTION §9.4 — XLIB_ENABLE_VULNCHECK=1
 #                      按需启用。
+#
+# xlibgate_module      go install 模块路径@version。默认 ZoneCNH 历史路径；
+#                      迁移完成后可改为 github.com/xhyperium/xlibgate/cmd/xlibgate@v…。
 # ────────────────────────────────────────────
 
 name: CI — Foundation (P0)
@@ -69,11 +73,19 @@ on:
         description: 'Opt-in security vulnerability scan (default false, per §9.4)'
         type: boolean
         default: false
+      xlibgate_module:
+        description: 'go install path@version for xlibgate CLI'
+        type: string
+        default: 'github.com/ZoneCNH/xlibgate/cmd/xlibgate@v1.0.2'
+
+permissions:
+  contents: read
 
 jobs:
   ci:
     name: Foundation CI
     runs-on: ${{ inputs.runs_on }}
+    timeout-minutes: 30
     env:
       GO_VERSION: ${{ inputs.go_version }}
       GOTOOLCHAIN: local
@@ -92,15 +104,16 @@ jobs:
 
       - name: go mod tidy (preflight)
         run: |
-          go mod tidy -diff
-          if [ $? -ne 0 ]; then
+          set -euo pipefail
+          if ! go mod tidy -diff; then
             echo "::error::go.mod or go.sum is out of sync — run 'go mod tidy'"
             exit 1
           fi
 
       - name: gofmt
         run: |
-          unformatted=$(gofmt -l . 2>/dev/null)
+          set -euo pipefail
+          unformatted=$(gofmt -l . 2>/dev/null || true)
           if [ -n "$unformatted" ]; then
             echo "::error::Files not gofmt'd:"
             echo "$unformatted"
@@ -115,26 +128,31 @@ jobs:
 
       - name: go test (race + coverage)
         run: |
+          set -euo pipefail
           go test -race -coverprofile=coverage.out -covermode=atomic ./...
 
       - name: Coverage gate
         env:
           THRESHOLD: ${{ inputs.coverage_threshold }}
         run: |
+          set -euo pipefail
           if [ ! -f coverage.out ]; then
             echo "::error::coverage.out not found"
             exit 1
           fi
-          total=$(go tool cover -func=coverage.out | grep total | awk '{print $3}' | sed 's/%//')
-          if [ -z "$total" ]; then
+          total=$(go tool cover -func=coverage.out | awk '/^total:/{gsub(/%/,"",$3); print $3}')
+          if [ -z "${total}" ]; then
             echo "::error::Could not parse coverage total"
             exit 1
           fi
           echo "Coverage: ${total}% (threshold: ${THRESHOLD}%)"
-          if (( $(echo "$total < $THRESHOLD" | bc -l) )); then
-            echo "::error::Coverage ${total}% below threshold ${THRESHOLD}%"
-            exit 1
-          fi
+          # awk 浮点比较，避免依赖 bc
+          awk -v t="$total" -v th="$THRESHOLD" 'BEGIN {
+            if (t+0 < th+0) {
+              printf "::error::Coverage %s%% below threshold %s%%\n", t, th
+              exit 1
+            }
+          }'
 
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v6
@@ -142,16 +160,24 @@ jobs:
           version: latest
           args: --timeout=5m
 
+      - name: govulncheck
+        if: ${{ inputs.enable_govulncheck }}
+        run: |
+          set -euo pipefail
+          go install golang.org/x/vuln/cmd/govulncheck@latest
+          govulncheck ./...
+
       - name: xlibgate — trust check
         run: |
-          go install github.com/ZoneCNH/xlibgate/cmd/xlibgate@v1.0.2
+          set -euo pipefail
+          go install ${{ inputs.xlibgate_module }}
           xlibgate trust
 
       - name: xlibgate — boundary check
         run: xlibgate check
 
       - name: gitleaks (secret scan)
+        if: hashFiles('.gitleaks.toml') != ''
         uses: gitleaks/gitleaks-action@v2
         with:
           config-path: .gitleaks.toml
-        continue-on-error: true

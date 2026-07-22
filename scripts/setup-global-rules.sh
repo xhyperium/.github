@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # setup-global-rules.sh — xhyperium 全局规则一键分发
 #
 # 使用方式：
@@ -26,14 +26,14 @@ else
 fi
 
 echo -e "${BLUE}╔══════════════════════════════════════╗${NC}"
-echo -e "${BLUE}║  xhyperium 全局规则初始化 v1.1       ║${NC}"
+echo -e "${BLUE}║  xhyperium 全局规则初始化 v1.2       ║${NC}"
 echo -e "${BLUE}╚══════════════════════════════════════╝${NC}"
 echo ""
 echo -e "  SSOT: ${REPO_URL}"
 echo -e "  本地: ${ORG_CONFIG_DIR}"
 echo ""
 
-if [ -d "${ORG_CONFIG_DIR}/.git" ]; then
+if [[ -d "${ORG_CONFIG_DIR}/.git" ]]; then
   echo -e "${YELLOW}🔄 更新组织配置...${NC}"
   remote="$(git -C "${ORG_CONFIG_DIR}" remote get-url origin 2>/dev/null || true)"
   if [[ -n "${remote}" && "${remote}" != *xhyperium/.github* ]]; then
@@ -52,7 +52,7 @@ if [ -d "${ORG_CONFIG_DIR}/.git" ]; then
   echo -e "${GREEN}✅ 已更新到最新版本${NC}"
 else
   echo -e "${YELLOW}📥 克隆组织配置...${NC}"
-  if [ -d "${ORG_CONFIG_DIR}" ]; then
+  if [[ -d "${ORG_CONFIG_DIR}" ]]; then
     echo -e "${RED}FAIL: ${ORG_CONFIG_DIR} 存在但不是 git 仓库，请手动处理${NC}"
     exit 1
   fi
@@ -69,7 +69,7 @@ link_rule() {
   local src="$1"
   local dest="$2"
   local label="$3"
-  if [ -f "${src}" ]; then
+  if [[ -f "${src}" ]]; then
     ln -sfn "${src}" "${dest}"
     echo -e "  ${GREEN}✅ ${label}${NC}"
   else
@@ -77,8 +77,11 @@ link_rule() {
   fi
 }
 
+# 语言规范（存在才链；Python 等预留路径）
 link_rule "${ORG_CONFIG_DIR}/rulesets/rust/RULES.md" "${CLAUDE_RULES_DIR}/rust.md" "Rust 规则"
 link_rule "${ORG_CONFIG_DIR}/rulesets/python/RULES.md" "${CLAUDE_RULES_DIR}/python.md" "Python 规则"
+
+# Agent 纪律与工作流
 link_rule "${ORG_CONFIG_DIR}/rulesets/agent-discipline.md" "${CLAUDE_RULES_DIR}/agent-discipline.md" "Agent 执行纪律"
 link_rule "${ORG_CONFIG_DIR}/rulesets/agent-workflow.md" "${CLAUDE_RULES_DIR}/agent-workflow.md" "Agent 工作流编排"
 link_rule "${ORG_CONFIG_DIR}/rulesets/agent-safety.md" "${CLAUDE_RULES_DIR}/agent-safety.md" "Agent 安全护栏"
@@ -87,11 +90,19 @@ link_rule "${ORG_CONFIG_DIR}/rulesets/agent-teams.md" "${CLAUDE_RULES_DIR}/agent
 link_rule "${ORG_CONFIG_DIR}/rulesets/agent-codex.md" "${CLAUDE_RULES_DIR}/agent-codex.md" "Agent Codex"
 link_rule "${ORG_CONFIG_DIR}/rulesets/agent-model-routing.md" "${CLAUDE_RULES_DIR}/agent-model-routing.md" "Agent 模型路由"
 
+# 可选：专项 Rust 文档（便于按主题打开）
+link_rule "${ORG_CONFIG_DIR}/rulesets/rust/security.md" "${CLAUDE_RULES_DIR}/rust-security.md" "Rust security"
+link_rule "${ORG_CONFIG_DIR}/rulesets/rust/async-runtime.md" "${CLAUDE_RULES_DIR}/rust-async.md" "Rust async"
+link_rule "${ORG_CONFIG_DIR}/rulesets/rust/testing.md" "${CLAUDE_RULES_DIR}/rust-testing.md" "Rust testing"
+link_rule "${ORG_CONFIG_DIR}/rulesets/rust/ci.md" "${CLAUDE_RULES_DIR}/rust-ci.md" "Rust CI"
+link_rule "${ORG_CONFIG_DIR}/rulesets/rust/cheatsheet.md" "${CLAUDE_RULES_DIR}/rust-cheatsheet.md" "Rust cheatsheet"
+
 echo ""
 echo -e "${BLUE}📋 验证：${CLAUDE_RULES_DIR}${NC}"
+# shellcheck disable=SC2012
 ls -la "${CLAUDE_RULES_DIR}"/*.md 2>/dev/null || true
 
-RULE_COUNT=$(find "${ORG_CONFIG_DIR}/rulesets" -name "*.md" 2>/dev/null | wc -l | tr -d ' ')
+RULE_COUNT="$(find "${ORG_CONFIG_DIR}/rulesets" -name '*.md' 2>/dev/null | wc -l | tr -d ' ')"
 echo ""
 echo -e "${GREEN}╔══════════════════════════════════════╗${NC}"
 echo -e "${GREEN}║  全局规则配置完成                    ║${NC}"

@@ -14,13 +14,21 @@ GitHub reusable workflow 的 `uses:` 路径必须是：
 因此本仓**可调用源**位于 **`.github/workflows/`**（与顶层 `workflows/` 内容同步）。
 顶层 `workflows/` 便于浏览与文档链接；**改 workflow 时两边必须同改**，以免 `uses:` 与文档脱节。
 
+本地同步：
+
+```bash
+bash scripts/sync-workflows.sh
+```
+
+本仓 `meta-validate` CI 会在两边 YAML 漂移时失败。
+
 ## 体系总览
 
 | 工作流 | 语言 | Tier | Gates |
 |--------|------|------|-------|
-| `ci-foundation.yml` | **Go** | P0 | gofmt → build → test(-race) → vet → coverage → lint → xlibgate |
-| `ci-standard.yml` | **Go** | P1 | gofmt → build → test → coverage → vet → lint → xlibgate |
-| `ci-rust-foundation.yml` | **Rust** | P0 | fmt → clippy(-D) → test → cargo deny |
+| `ci-foundation.yml` | **Go** | P0 | gofmt → build → vet → test(-race) → coverage → lint → xlibgate → gitleaks |
+| `ci-standard.yml` | **Go** | P1 | gofmt → build → test → coverage → vet → lint → xlibgate trust |
+| `ci-rust-foundation.yml` | **Rust** | P0 | fmt → clippy(-D) → test → doc（可选）→ cargo deny（可选） |
 | `ci-rust-standard.yml` | **Rust** | P1 | fmt → clippy(-D) → test |
 
 > Go 与 Rust **分开** 复用；Rust 仓库请用 `ci-rust-*`。
@@ -64,6 +72,7 @@ jobs:
     with:
       rust_toolchain: "1.85"
       run_deny: true
+      run_doc: true
 ```
 
 ### 状态检查名称（org ruleset）
@@ -73,11 +82,12 @@ jobs:
 | `rust-fmt` | rustfmt |
 | `rust-clippy` | clippy -D warnings |
 | `rust-test` | cargo test |
-| `rust-deny` | cargo deny（仅 foundation） |
+| `rust-doc` | cargo doc（仅 foundation，`run_doc`） |
+| `rust-deny` | cargo deny（仅 foundation，`run_deny`） |
 
 ## Go 模块接入
 
-见历史注释与 `ci-foundation.yml` / `ci-standard.yml` 文件头。
+见 `ci-foundation.yml` / `ci-standard.yml` 文件头。
 
 ```yaml
 jobs:
@@ -85,6 +95,8 @@ jobs:
     uses: xhyperium/.github/.github/workflows/ci-foundation.yml@main
     with:
       go_version: "1.26.5"
+      # 模块迁移后可覆盖：
+      # xlibgate_module: "github.com/xhyperium/xlibgate/cmd/xlibgate@v1.0.2"
 ```
 
 ## 规范引用

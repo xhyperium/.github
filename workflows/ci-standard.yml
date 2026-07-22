@@ -1,7 +1,7 @@
 # xhyperium Standard CI — P1 标准门禁
 #
 # 适用：L2.5 领域共享层 / 业务域模块 / library（decimalx, domainx, binance 等）
-# Gate: 轻量级（build + test + vet + lint + xlibgate trust）
+# Gate: gofmt → build → test → coverage → vet → lint → xlibgate trust
 # 约束：self-hosted runner 必须已在 xhyperium org 注册
 #
 # ────────────────────────────────────────────
@@ -23,6 +23,7 @@
 #           go_version: '1.26.5'        # Go 工具链版本
 #           coverage_threshold: 60      # 全局覆盖率最低门禁（0–100）
 #           runs_on: ubuntu-latest      # Runner 标签（生产须切换 self-hosted）
+#           xlibgate_module: 'github.com/ZoneCNH/xlibgate/cmd/xlibgate@v1.0.2'
 #
 # ────────────────────────────────────────────
 # 使用示例
@@ -78,6 +79,8 @@
 #                      ⚠ 生产环境必须切换为 self-hosted runner：
 #                        - Standard P1:   [self-hosted, Linux, X64, ci-go]
 #                      默认值仅用于初始接入验证，不得长期使用 GitHub-hosted。
+#
+# xlibgate_module      go install 模块路径@version。默认 ZoneCNH 历史路径。
 # ────────────────────────────────────────────
 
 name: CI — Standard (P1)
@@ -97,11 +100,19 @@ on:
         description: 'Runner label — production must use self-hosted, ubuntu-latest for onboarding only'
         type: string
         default: 'ubuntu-latest'
+      xlibgate_module:
+        description: 'go install path@version for xlibgate CLI'
+        type: string
+        default: 'github.com/ZoneCNH/xlibgate/cmd/xlibgate@v1.0.2'
+
+permissions:
+  contents: read
 
 jobs:
   ci:
     name: Standard CI
     runs-on: ${{ inputs.runs_on }}
+    timeout-minutes: 25
     env:
       GO_VERSION: ${{ inputs.go_version }}
       GOTOOLCHAIN: local
@@ -120,15 +131,16 @@ jobs:
 
       - name: go mod tidy (preflight)
         run: |
-          go mod tidy -diff
-          if [ $? -ne 0 ]; then
+          set -euo pipefail
+          if ! go mod tidy -diff; then
             echo "::error::go.mod or go.sum is out of sync — run 'go mod tidy'"
             exit 1
           fi
 
       - name: gofmt
         run: |
-          unformatted=$(gofmt -l . 2>/dev/null)
+          set -euo pipefail
+          unformatted=$(gofmt -l . 2>/dev/null || true)
           if [ -n "$unformatted" ]; then
             echo "::error::Files not gofmt'd:"
             echo "$unformatted"
@@ -140,37 +152,42 @@ jobs:
 
       - name: go test (coverage)
         run: |
+          set -euo pipefail
           go test -coverprofile=coverage.out -covermode=atomic ./...
 
       - name: Coverage gate
         env:
           THRESHOLD: ${{ inputs.coverage_threshold }}
         run: |
+          set -euo pipefail
           if [ ! -f coverage.out ]; then
             echo "::error::coverage.out not found"
             exit 1
           fi
-          total=$(go tool cover -func=coverage.out | grep total | awk '{print $3}' | sed 's/%//')
-          if [ -z "$total" ]; then
+          total=$(go tool cover -func=coverage.out | awk '/^total:/{gsub(/%/,"",$3); print $3}')
+          if [ -z "${total}" ]; then
             echo "::error::Could not parse coverage total"
             exit 1
           fi
           echo "Coverage: ${total}% (threshold: ${THRESHOLD}%)"
-          if (( $(echo "$total < $THRESHOLD" | bc -l) )); then
-            echo "::error::Coverage ${total}% below threshold ${THRESHOLD}%"
-            exit 1
-          fi
+          awk -v t="$total" -v th="$THRESHOLD" 'BEGIN {
+            if (t+0 < th+0) {
+              printf "::error::Coverage %s%% below threshold %s%%\n", t, th
+              exit 1
+            }
+          }'
 
       - name: go vet
         run: go vet ./...
 
-      - name: golangci-lint (error only)
+      - name: golangci-lint
         uses: golangci/golangci-lint-action@v6
         with:
           version: latest
-          args: --timeout=5m --issues-exit-code=0
+          args: --timeout=5m
 
       - name: xlibgate — trust check
         run: |
-          go install github.com/ZoneCNH/xlibgate/cmd/xlibgate@v1.0.2
+          set -euo pipefail
+          go install ${{ inputs.xlibgate_module }}
           xlibgate trust

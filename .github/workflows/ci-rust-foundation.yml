@@ -1,7 +1,7 @@
 # xhyperium Rust Foundation CI — P0 基座门禁
 #
 # 适用：基础设施 / 核心库 workspace（kernel、configx、infra.rs 等）
-# Gate：fmt + clippy(-D warnings) + test + cargo deny（若存在 deny.toml）
+# Gate：fmt + clippy(-D warnings) + test + cargo deny（可选）+ cargo doc（可选）
 #
 # 用法：
 #   jobs:
@@ -10,8 +10,9 @@
 #       with:
 #         rust_toolchain: "1.85"
 #         run_deny: true
+#         run_doc: true
 #
-# status checks：rust-fmt · rust-clippy · rust-test · rust-deny（可选）
+# status checks：rust-fmt · rust-clippy · rust-test · rust-deny · rust-doc
 
 name: CI Rust Foundation
 
@@ -31,17 +32,27 @@ on:
         description: 是否运行 cargo deny（仓库需有 deny.toml）
         type: boolean
         default: true
+      run_doc:
+        description: 是否运行 cargo doc（对齐 rulesets/rust/ci.md P0 文档门禁）
+        type: boolean
+        default: true
 
 permissions:
   contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: "1"
+  RUSTDOCFLAGS: "-D warnings"
 
 jobs:
   rust-fmt:
     name: rust-fmt
     runs-on: ${{ inputs.runs_on }}
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@master
+      - uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: ${{ inputs.rust_toolchain }}
           components: rustfmt
@@ -50,13 +61,16 @@ jobs:
   rust-clippy:
     name: rust-clippy
     runs-on: ${{ inputs.runs_on }}
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@master
+      - uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: ${{ inputs.rust_toolchain }}
           components: clippy
       - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: clippy-${{ inputs.rust_toolchain }}
       - run: >
           cargo clippy --workspace --all-targets --all-features
           ${{ inputs.cargo_packages }}
@@ -65,23 +79,45 @@ jobs:
   rust-test:
     name: rust-test
     runs-on: ${{ inputs.runs_on }}
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@master
+      - uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: ${{ inputs.rust_toolchain }}
       - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: test-${{ inputs.rust_toolchain }}
       - run: >
           cargo test --workspace --all-targets --all-features
+          ${{ inputs.cargo_packages }}
+
+  rust-doc:
+    name: rust-doc
+    if: ${{ inputs.run_doc }}
+    runs-on: ${{ inputs.runs_on }}
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: ${{ inputs.rust_toolchain }}
+      - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: doc-${{ inputs.rust_toolchain }}
+      - name: cargo doc
+        run: >
+          cargo doc --workspace --no-deps --all-features
           ${{ inputs.cargo_packages }}
 
   rust-deny:
     name: rust-deny
     if: ${{ inputs.run_deny }}
     runs-on: ${{ inputs.runs_on }}
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@master
+      - uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: ${{ inputs.rust_toolchain }}
       - uses: EmbarkStudios/cargo-deny-action@v2
