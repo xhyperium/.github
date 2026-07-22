@@ -7,8 +7,8 @@
 | 能力 | 说明 |
 |------|------|
 | **可复用 CI** | Go / Rust 门禁工作流，模块仓 `uses:` 引用 |
-| **编码与 Agent 规范** | Rust 全局 RULES、Agent 纪律与分发脚本 |
-| **治理模板** | 默认分支 / Tag / Rust PR 质量 ruleset JSON |
+| **编码与 Agent 规范** | 协作宪法、Rust/Go 规范、Agent 纪律与分发脚本 |
+| **治理模板** | 默认分支 / Tag / Rust PR 质量 ruleset JSON（默认 disabled） |
 | **组织首页** | `profile/README.md`（GitHub Org Profile） |
 | **安全基线** | 组织级 CodeQL 配置 |
 
@@ -35,17 +35,20 @@
 │   ├── ci-*.yml                  # 与 workflows/ 字节一致
 │   └── meta-validate.yml         # 本仓自检（非 reusable）
 ├── rulesets/
-│   ├── rust/                     # Rust 全局规范 SSOT（入口 RULES.md）
-│   ├── agent-*.md                # Agent 纪律 / 工作流 / 安全 …
-│   ├── main-protection.json
-│   ├── release-tag-protection.json
-│   └── org-rust-pr-quality.ruleset.json
+│   ├── agent-teams-constitution.md  # 最高治理 C/L/P
+│   ├── agent-quality-gates.md       # 跨语言验证矩阵
+│   ├── rust/                        # Rust 完整版 SSOT
+│   ├── go/RULES.md                  # Go 薄规范
+│   ├── agent-*.md                   # 纪律 / 工作流 / Teams …
+│   └── *.json                       # 分支 / tag / PR quality 模板
 ├── scripts/
 │   ├── setup-global-rules.sh     # 规则一键分发 → ~/org-config + ~/.claude/rules
 │   └── sync-workflows.sh         # workflows/ ↔ .github/workflows/ 同步
 └── codeql/
     └── codeql-config.yml
 ```
+
+规范索引与层级：[rulesets/README.md](./rulesets/README.md)
 
 ---
 
@@ -124,10 +127,12 @@ jobs:
 
 | 路径 | 内容 |
 |------|------|
+| [rulesets/agent-teams-constitution.md](./rulesets/agent-teams-constitution.md) | Agent Teams 宪法（最高治理 C/L/P） |
+| [rulesets/agent-quality-gates.md](./rulesets/agent-quality-gates.md) | 跨语言验证命令矩阵 |
 | [rulesets/rust/RULES.md](./rulesets/rust/RULES.md) | Rust 编码规范完整版 **v2.1.0**（P0 不可削弱） |
-| [rulesets/rust/](./rulesets/rust/) | security / async / testing / ci / clippy / … 专题 |
-| [rulesets/agent-*.md](./rulesets/) | Agent 执行纪律、工作流、安全、Teams、Codex 等 |
-| [rulesets/*.json](./rulesets/) | 分支 / Tag / Rust PR 质量 ruleset **模板**（需 org admin 导入） |
+| [rulesets/go/RULES.md](./rulesets/go/RULES.md) | Go 薄规范 **v0.1.0** |
+| [rulesets/agent-*.md](./rulesets/) | 执行纪律、工作流、安全、Teams、Codex 等 |
+| [rulesets/*.json](./rulesets/) | 分支 / Tag / Rust PR 质量 ruleset **模板**（导入须谨慎） |
 
 说明与导入注意：[rulesets/README.md](./rulesets/README.md)
 

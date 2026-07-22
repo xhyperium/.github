@@ -81,3 +81,81 @@ jobs:
           yaml.safe_load(p.read_text())
           print(f"OK {p}")
           PY
+
+      - name: Rulesets markdown relative links
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import re, sys
+          from pathlib import Path
+          root = Path("rulesets")
+          pat = re.compile(r"\[([^\]]*)\]\(([^)]+)\)")
+          broken = []
+          for p in sorted(root.rglob("*.md")):
+              text = p.read_text(encoding="utf-8")
+              for m in pat.finditer(text):
+                  url = m.group(2).split()[0].split("#")[0]
+                  if not url or url.startswith(("http://", "https://", "mailto:")):
+                      continue
+                  target = (p.parent / url).resolve()
+                  try:
+                      target.relative_to(Path.cwd().resolve())
+                  except ValueError:
+                      # allow links that resolve outside rulesets but inside repo
+                      pass
+                  if not target.exists():
+                      broken.append(f"{p}: {url}")
+          if broken:
+              print("FAIL broken relative links:", file=sys.stderr)
+              for b in broken:
+                  print(" ", b, file=sys.stderr)
+              sys.exit(1)
+          print(f"OK rulesets relative links ({sum(1 for _ in root.rglob('*.md'))} files)")
+          PY
+
+      - name: Rust specialty version headers align with RULES.md
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import re, sys
+          from pathlib import Path
+          rules = Path("rulesets/rust/RULES.md").read_text(encoding="utf-8")
+          m = re.search(r"\*\*版本\*\*：([0-9]+\.[0-9]+\.[0-9]+)", rules)
+          if not m:
+              print("FAIL: cannot parse RULES.md version", file=sys.stderr)
+              sys.exit(1)
+          expected = m.group(1)
+          bad = []
+          for p in sorted(Path("rulesets/rust").glob("*.md")):
+              if p.name == "RULES.md":
+                  continue
+              text = p.read_text(encoding="utf-8")
+              # accept "版本：x.y.z" or "版本 x.y.z"
+              vm = re.search(r"版本[：: ]+([0-9]+\.[0-9]+\.[0-9]+)", text)
+              if not vm:
+                  continue  # cheatsheet may use different form; still check if present
+              if vm.group(1) != expected:
+                  bad.append(f"{p.name}: {vm.group(1)} != {expected}")
+          if bad:
+              print("FAIL rust specialty version drift:", file=sys.stderr)
+              for b in bad:
+                  print(" ", b, file=sys.stderr)
+              sys.exit(1)
+          print(f"OK rust specialty versions == {expected}")
+          PY
+
+      - name: org-rust-pr-quality safety defaults
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, sys
+          from pathlib import Path
+          p = Path("rulesets/org-rust-pr-quality.ruleset.json")
+          d = json.loads(p.read_text())
+          if d.get("enforcement") == "active":
+              inc = d.get("conditions", {}).get("repository_name", {}).get("include") or []
+              if "~ALL" in inc:
+                  print("FAIL: org-rust-pr-quality must not use ~ALL while active", file=sys.stderr)
+                  sys.exit(1)
+          print(f"OK org-rust-pr-quality enforcement={d.get('enforcement')}")
+          PY

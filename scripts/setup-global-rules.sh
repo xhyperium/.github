@@ -26,7 +26,7 @@ else
 fi
 
 echo -e "${BLUE}╔══════════════════════════════════════╗${NC}"
-echo -e "${BLUE}║  xhyperium 全局规则初始化 v1.2       ║${NC}"
+echo -e "${BLUE}║  xhyperium 全局规则初始化 v1.3       ║${NC}"
 echo -e "${BLUE}╚══════════════════════════════════════╝${NC}"
 echo ""
 echo -e "  SSOT: ${REPO_URL}"
@@ -79,9 +79,17 @@ link_rule() {
 
 # 语言规范（存在才链；Python 等预留路径）
 link_rule "${ORG_CONFIG_DIR}/rulesets/rust/RULES.md" "${CLAUDE_RULES_DIR}/rust.md" "Rust 规则"
+link_rule "${ORG_CONFIG_DIR}/rulesets/go/RULES.md" "${CLAUDE_RULES_DIR}/go.md" "Go 规则（薄）"
 link_rule "${ORG_CONFIG_DIR}/rulesets/python/RULES.md" "${CLAUDE_RULES_DIR}/python.md" "Python 规则"
 
+# 最高治理（宪法）
+link_rule "${ORG_CONFIG_DIR}/rulesets/agent-teams-constitution.md" \
+  "${CLAUDE_RULES_DIR}/agent-teams-constitution.md" "Agent Teams 宪法"
+link_rule "${ORG_CONFIG_DIR}/rulesets/agent-teams-constitution-appendix.md" \
+  "${CLAUDE_RULES_DIR}/agent-teams-constitution-appendix.md" "Agent Teams 宪法附录"
+
 # Agent 纪律与工作流
+link_rule "${ORG_CONFIG_DIR}/rulesets/agent-quality-gates.md" "${CLAUDE_RULES_DIR}/agent-quality-gates.md" "跨语言质量门禁"
 link_rule "${ORG_CONFIG_DIR}/rulesets/agent-discipline.md" "${CLAUDE_RULES_DIR}/agent-discipline.md" "Agent 执行纪律"
 link_rule "${ORG_CONFIG_DIR}/rulesets/agent-workflow.md" "${CLAUDE_RULES_DIR}/agent-workflow.md" "Agent 工作流编排"
 link_rule "${ORG_CONFIG_DIR}/rulesets/agent-safety.md" "${CLAUDE_RULES_DIR}/agent-safety.md" "Agent 安全护栏"

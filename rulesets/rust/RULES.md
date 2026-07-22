@@ -542,4 +542,4 @@ anyhow = { version = "1.0", default-features = false }
 ---
 
 **维护者**：组织规则所有者  
-**关联**：分发说明见 `docs/global-rules-distribution.md`；初始化脚本见 `scripts/setup-global-rules.sh`
+**关联**：组织 SSOT 与分发见仓库根 [README.md](../../README.md) 与 [rulesets/README.md](../README.md)；初始化脚本见 `scripts/setup-global-rules.sh`
