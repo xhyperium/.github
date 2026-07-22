@@ -8,7 +8,7 @@
 |------|------|
 | **可复用 CI** | Rust 门禁工作流，模块仓 `uses:` 引用 |
 | **编码与 Agent 规范** | 协作宪法、Rust 规范、Agent 纪律与分发脚本 |
-| **治理模板** | 默认分支 / Tag / Rust PR 质量 ruleset JSON（默认 disabled） |
+| **治理模板** | 默认分支 / Tag / Rust PR 质量 ruleset JSON（active；应用见 apply 脚本） |
 | **组织首页** | `profile/README.md`（GitHub Org Profile） |
 | **安全基线** | 组织级 CodeQL 配置 |
 

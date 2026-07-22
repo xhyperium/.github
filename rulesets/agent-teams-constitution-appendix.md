@@ -1,7 +1,7 @@
-# Agent Teams 宪法 — 附录（全局）v2.8
+# Agent Teams 宪法 — 附录（全局）v2.9
 
 > 本文件是 [`agent-teams-constitution.md`](./agent-teams-constitution.md) 的附录部分，包含阈值定义、领域扩展槽、ID 体系、人工仲裁协议、角色权限详细矩阵和变更日志。
-> 正文（C-1~C-7、L-1~L-8、P-1~P-5、角色 ACL 快查、Kill Switch、降级策略）见正文。
+> 正文（C-1~C-7、L-1~L-8、P-1~P-5、角色 ACL 快查、Kill Switch、降级策略）见正文（**v2.9**）。
 >
 > **SSOT**：`xhyperium/.github` → `rulesets/agent-teams-constitution-appendix.md`  
 > **加载策略**：正文始终加载到 Agent 上下文；附录按需引用（阈值判定、ID 查询、仲裁流程、角色权限详情）。

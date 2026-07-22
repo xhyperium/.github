@@ -1,7 +1,7 @@
 # Agent 安全护栏规则
 
 > 来源：Superpowers (58k⭐) + Planning with Files (14k⭐) + Boris Tane (Cloudflare) + review-loop + Amp
-> 适用范围：所有 Agent 会话（跨语言、跨项目）
+> 适用范围：所有 Agent 会话（xhyperium 组织 · 默认 Rust 项目）
 
 ---
 

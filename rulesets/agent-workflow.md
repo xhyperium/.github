@@ -3,7 +3,7 @@
 > 适用范围：所有 Agent 会话（Claude Code / Codex / Gemini）  
 > 互补规则：  
 > - [agent-discipline.md](./agent-discipline.md)（执行纪律）  
-> - [agent-quality-gates.md](./agent-quality-gates.md)（跨语言门禁）  
+> - [agent-quality-gates.md](./agent-quality-gates.md)（质量门禁 · Rust）  
 > - [agent-teams-constitution.md](./agent-teams-constitution.md)（最高治理）  
 > - [agent-teams.md](./agent-teams.md)（多 Agent 波次）
 
