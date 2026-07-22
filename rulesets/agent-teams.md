@@ -111,7 +111,7 @@ Team Lead（主 Agent）**只做协调，不做实现**：
 | 划分波次 | 按依赖关系分波，每波 ≤ 5 agent |
 | 分配文件所有权 | 确保零重叠，共享文件自己串行处理 |
 | spawn + 分发任务 | 每个 agent 的 prompt 包含：任务描述 + 文件所有权清单 + 验收标准 |
-| 波次间质量门禁 | 按主语言执行门禁（Rust: cargo fmt/clippy/test；Go: gofmt/test/vet；见 quality-gates） |
+| 波次间质量门禁 | `cargo fmt` + `clippy` + `test`（见 [agent-quality-gates.md](./agent-quality-gates.md)） |
 | 合并结果 | 每波结束后合并各 agent 的改动到主分支 |
 | 处理冲突 | 共享文件的修改由 Lead 统一执行 |
 
@@ -134,9 +134,8 @@ Team Lead（主 Agent）**只做协调，不做实现**：
 - {标准2}
 
 ## 质量要求
-识别本仓主语言后执行对应门禁（org rulesets/agent-quality-gates.md）：
-- Rust: cargo fmt --check && cargo clippy … && cargo test -p {crate}
-- Go: gofmt 检查 && go test ./… && go vet ./…
+完成后运行（见 org rulesets/agent-quality-gates.md）：
+cargo fmt --check && cargo clippy … && cargo test -p {crate}
 全部通过后，通过 send_message 报告完成。
 ```
 
@@ -144,29 +143,23 @@ Team Lead（主 Agent）**只做协调，不做实现**：
 
 ## 5. 质量门禁（P0）
 
-命令**按仓库语言选择**，完整矩阵见 [agent-quality-gates.md](./agent-quality-gates.md)。
+完整命令见 [agent-quality-gates.md](./agent-quality-gates.md)。
 
 ### 5.1 波次间门禁
 
-每波结束后，Team Lead **必须**执行与本仓匹配的门禁。示例：
+每波结束后，Team Lead **必须**执行：
 
 ```bash
-# Rust workspace
 cargo fmt --all -- --check
 cargo clippy --workspace --all-targets -- -D warnings
 cargo test --workspace
-
-# Go module
-test -z "$(gofmt -l .)"
-go test ./...
-go vet ./...
 ```
 
 全部通过才能启动下一波。任何失败必须在当前波修复。
 
 ### 5.2 Agent 级门禁
 
-每个 agent 完成任务后，**必须**对**自己改动的包/模块**执行收窄后的门禁（Rust `-p`、Go 包路径等），禁止用错误语言的工具链「假装验证」。
+每个 agent 完成任务后，**必须**对**自己改动的 crate** 执行收窄后的门禁（`cargo … -p {crate}`），禁止跳过验证。
 
 ---
 

@@ -1,5 +1,5 @@
 {
-  "$schema_comment": "Org 级默认分支结构保护（通用，跨语言）。仅做结构门禁：必须走 PR、禁止 force-push、禁止删除。质量类 status check 不在此处统一强制——不同语言仓库的 check 名不同（Go 为 Standard CI/Foundation CI，Rust 为 rust-fmt/rust-clippy/rust-test），由各语言 ruleset（如 org-rust-pr-quality.ruleset.json）按仓库分别强制。切勿在此硬编码不存在的 check 名（如 'check'），否则导入后全 org 默认分支合并将被永久卡死。",
+  "$schema_comment": "Org 级默认分支结构保护。仅做结构门禁：必须走 PR、禁止 force-push、禁止删除。质量类 status check 不在此处统一强制——Rust check 名（rust-fmt/clippy/test）由 org-rust-pr-quality.ruleset.json 按仓库分别强制。切勿在此硬编码不存在的 check 名，否则导入后默认分支合并可能被卡死。",
   "name": "main-protection",
   "target": "branch",
   "enforcement": "active",

@@ -6,7 +6,6 @@ disable-default-queries: false
 
 # Path filters: exclude vendored, generated, agent/worktree scratch, and build output
 paths-ignore:
-  - "**/*_test.go"
   - "vendor/**"
   - "node_modules/**"
   - "target/**"
@@ -17,8 +16,6 @@ paths-ignore:
   - ".omx/**"
   - ".omc/**"
   - ".swarm/**"
-  - "**/*.pb.go"
-  - "**/*_gen.go"
   - "**/generated/**"
 
 queries:

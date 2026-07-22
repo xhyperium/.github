@@ -27,17 +27,17 @@
 
 | 文件类型 | 是否源码文件 | 说明 |
 |----------|-------------|------|
-| `*.go`（非测试） | ✅ 是 | 核心判定对象 |
-| `*_test.go` | ❌ 否 | 测试文件独立计算，不纳入 substantial task 阈值 |
-| `go.mod` / `go.sum` | ❌ 否 | 依赖文件，归 §4.3 Executor "依赖"类别 |
-| `*.yaml` / `*.json` / `*.toml`（配置） | ❌ 否 | 归 Lead "配置调整"类别 |
-| `*.md`（spec/design/plan） | ❌ 否 | 归 Lead "规划"类别 |
+| `*.rs`（非测试） | ✅ 是 | 核心判定对象 |
+| `*_test.rs` / `tests/**/*.rs` | ❌ 否 | 测试文件独立计算，不纳入 substantial task 阈值 |
+| `Cargo.toml` / `Cargo.lock` | ❌ 否 | 依赖文件，归 Executor「依赖」类别（新增依赖仍需 Lead 批准） |
+| `*.yaml` / `*.json` / `*.toml`（配置，非 Cargo） | ❌ 否 | 归 Lead「配置调整」类别 |
+| `*.md`（spec/design/plan） | ❌ 否 | 归 Lead「规划」类别 |
 | `*.sh` / `Makefile` / `Dockerfile` | ✅ 是 | 构建/部署脚本视为源码 |
-| `*.sql`（migration / schema） | ✅ 是 | 数据 schema 变更影响等同源码，尤其在交易系统中 |
+| `*.sql`（migration / schema） | ✅ 是 | 数据 schema 变更影响等同源码 |
 | `*.proto` / `*.graphql` | ✅ 是 | 接口定义文件，变更即潜在 breaking change |
-| `*_gen.go` / `*.pb.go`（生成代码） | ❌ 否 | 生成代码本身不计入阈值；但其**模板/定义文件**（`.proto`、`go generate` 指令）按上述规则计算 |
+| 生成代码（`**/target/**`、build.rs 输出等） | ❌ 否 | 生成代码本身不计入阈值；其**模板/定义文件**按上述规则计算 |
 
-项目级宪法可扩展此定义（如增加 `*.py`、`*.ts` 等），但不可缩小范围。
+项目级宪法可扩展此定义（如增加其它语言扩展名），但不可缩小范围。
 
 ---
 
@@ -210,7 +210,7 @@ domain_constraints:
 | **测试** | 在 scope_in 范围内编写测试 | scope_frozen == true |
 | **构建** | 执行 build / test / vet / fmt | 无 |
 | **修复** | 修复 lint 问题、编译错误 | scope_in 范围内 |
-| **依赖** | 更新依赖文件（go.mod 等） | 新增依赖需 Lead 批准 |
+| **依赖** | 更新依赖文件（Cargo.toml / Cargo.lock 等） | 新增依赖需 Lead 批准 |
 | **证据** | 输出 build.log / test.log / verdict.json | 无 |
 
 **禁止操作（除 ALL-F01~F10 外）：**
@@ -282,9 +282,9 @@ domain_constraints:
 | P-1 累积限制 | PostToolUse hook 概念已定义 | ✅ 全局 hook 已实现 | `p1-cumulative-guard.sh` |
 | W-1 Anti-Shadowing | code review 时标记 | ✅ 已纳入审查清单 | 语义重复依赖人工 Reviewer |
 
-### F.2 项目级升级实例（x.go 参考）
+### F.2 项目级升级实例（参考）
 
-> 以下为 x.go 项目的实施记录，供其他项目参考。非全局强制。
+> 以下为历史项目实施记录，供其他项目参考。非全局强制。
 
 | 信任假设 | 项目级升级 | 升级后力度 | 实施产物 |
 |----------|-----------|-----------|----------|

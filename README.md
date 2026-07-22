@@ -6,8 +6,8 @@
 
 | 能力 | 说明 |
 |------|------|
-| **可复用 CI** | Go / Rust 门禁工作流，模块仓 `uses:` 引用 |
-| **编码与 Agent 规范** | 协作宪法、Rust/Go 规范、Agent 纪律与分发脚本 |
+| **可复用 CI** | Rust 门禁工作流，模块仓 `uses:` 引用 |
+| **编码与 Agent 规范** | 协作宪法、Rust 规范、Agent 纪律与分发脚本 |
 | **治理模板** | 默认分支 / Tag / Rust PR 质量 ruleset JSON（默认 disabled） |
 | **组织首页** | `profile/README.md`（GitHub Org Profile） |
 | **安全基线** | 组织级 CodeQL 配置 |
@@ -27,18 +27,15 @@
 │   └── README.md                 # 组织 Profile（github.com/xhyperium）
 ├── workflows/                    # 可复用 CI：文档入口 + YAML 镜像
 │   ├── README.md
-│   ├── ci-foundation.yml         # Go P0
-│   ├── ci-standard.yml           # Go P1
 │   ├── ci-rust-foundation.yml    # Rust P0
 │   └── ci-rust-standard.yml      # Rust P1
 ├── .github/workflows/            # ★ GitHub Actions 可调用源（uses: 必须指向这里）
-│   ├── ci-*.yml                  # 与 workflows/ 字节一致
+│   ├── ci-rust-*.yml             # 与 workflows/ 字节一致
 │   └── meta-validate.yml         # 本仓自检（非 reusable）
 ├── rulesets/
 │   ├── agent-teams-constitution.md  # 最高治理 C/L/P
-│   ├── agent-quality-gates.md       # 跨语言验证矩阵
+│   ├── agent-quality-gates.md       # 验证矩阵（Rust 为主）
 │   ├── rust/                        # Rust 完整版 SSOT
-│   ├── go/RULES.md                  # Go 薄规范
 │   ├── agent-*.md                   # 纪律 / 工作流 / Teams …
 │   └── *.json                       # 分支 / tag / PR quality 模板
 ├── scripts/
@@ -73,8 +70,6 @@ bash scripts/sync-workflows.sh --check  # 仅校验
 |------|------|------|------|
 | [`ci-rust-standard.yml`](./workflows/ci-rust-standard.yml) | Rust | P1 | fmt → clippy(-D) → test |
 | [`ci-rust-foundation.yml`](./workflows/ci-rust-foundation.yml) | Rust | P0 | 上者 + doc + cargo deny（可关） |
-| [`ci-standard.yml`](./workflows/ci-standard.yml) | Go | P1 | gofmt → build → test → coverage → vet → lint → xlibgate trust |
-| [`ci-foundation.yml`](./workflows/ci-foundation.yml) | Go | P0 | 上者 + race + xlibgate check + gitleaks（有配置时） |
 
 完整参数与示例：[workflows/README.md](./workflows/README.md)
 
@@ -109,18 +104,6 @@ jobs:
 
 Rust status check 名称（供 org ruleset）：`rust-fmt` · `rust-clippy` · `rust-test` · `rust-doc` · `rust-deny`
 
-### Go 最小接入
-
-```yaml
-jobs:
-  ci:
-    uses: xhyperium/.github/.github/workflows/ci-foundation.yml@main
-    with:
-      go_version: "1.26.5"
-      # 迁移后可覆盖 xlibgate 安装路径：
-      # xlibgate_module: "github.com/xhyperium/xlibgate/cmd/xlibgate@v1.0.2"
-```
-
 ---
 
 ## 2. 全局规范（rulesets）
@@ -128,9 +111,8 @@ jobs:
 | 路径 | 内容 |
 |------|------|
 | [rulesets/agent-teams-constitution.md](./rulesets/agent-teams-constitution.md) | Agent Teams 宪法（最高治理 C/L/P） |
-| [rulesets/agent-quality-gates.md](./rulesets/agent-quality-gates.md) | 跨语言验证命令矩阵 |
+| [rulesets/agent-quality-gates.md](./rulesets/agent-quality-gates.md) | 验证命令矩阵（Rust 为主） |
 | [rulesets/rust/RULES.md](./rulesets/rust/RULES.md) | Rust 编码规范完整版 **v2.1.0**（P0 不可削弱） |
-| [rulesets/go/RULES.md](./rulesets/go/RULES.md) | Go 薄规范 **v0.1.0** |
 | [rulesets/agent-*.md](./rulesets/) | 执行纪律、工作流、安全、Teams、Codex 等 |
 | [rulesets/*.json](./rulesets/) | 分支 / Tag / Rust PR 质量 ruleset **模板**（导入须谨慎） |
 

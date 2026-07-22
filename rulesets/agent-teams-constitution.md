@@ -361,7 +361,7 @@ Agent 间移交任务时，必须提供结构化 handoff：
 | 条件 | 降级行为 |
 |------|----------|
 | 非 Harness 模式（无 `.swarm/tasks/` 目录） | 铁律 L-1~L-3 自动降级为建议；L-4（verify）降级为"建议但强烈推荐"——Agent 应在对话中展示 test/build 输出作为证据；L-5（evidence）降级为建议——无 `.swarm/runs/` 时无法持久化证据文件，Agent 应将关键输出保留在对话上下文中；**P-3（review 落盘）降级为"review 结论保留在对话上下文中"**——无持久化路径时不强制文件输出，但 review 结论仍须是显式的 ready/not-ready；L-6~L-8 仍然生效（不降级为建议）。其中 L-7/L-8 的执行力度为 WARN（见下表），L-6（Scope 外不碰）因缺少 scope 定义而无法自动执行，降为 Agent 自律 |
-| TDD 场景（写入 `_test.go`） | L-1/L-2 跳过（允许先写测试再补 spec） |
+| TDD 场景（写入 `*_test.rs` / `tests/`） | L-1/L-2 跳过（允许先写测试再补 spec） |
 
 #### 执行力度降级（铁律自身属性）
 

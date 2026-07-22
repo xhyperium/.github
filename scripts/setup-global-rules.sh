@@ -77,9 +77,8 @@ link_rule() {
   fi
 }
 
-# 语言规范（存在才链；Python 等预留路径）
+# 语言规范（存在才链；其它语言预留路径）
 link_rule "${ORG_CONFIG_DIR}/rulesets/rust/RULES.md" "${CLAUDE_RULES_DIR}/rust.md" "Rust 规则"
-link_rule "${ORG_CONFIG_DIR}/rulesets/go/RULES.md" "${CLAUDE_RULES_DIR}/go.md" "Go 规则（薄）"
 link_rule "${ORG_CONFIG_DIR}/rulesets/python/RULES.md" "${CLAUDE_RULES_DIR}/python.md" "Python 规则"
 
 # 最高治理（宪法）
