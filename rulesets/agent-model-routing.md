@@ -83,7 +83,7 @@ Team Lead（主 Agent）在 Agent Teams 中的角色：
 
 1. **规划** — 拆解任务、分配 teammate、定义验收标准
 2. **路由** — 根据任务性质选择正确的执行引擎
-3. **验证** — 汇总结果、运行质量门禁（fmt + clippy + test）
+3. **验证** — 汇总结果、按仓库语言运行质量门禁（见 [agent-quality-gates.md](./agent-quality-gates.md)）
 4. **禁止** — 不得直接编写生产代码，必须委派给 Codex
 
 ---

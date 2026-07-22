@@ -1,64 +1,102 @@
 # xhyperium Organization Rulesets
 
-> 本目录是 **xhyperium** 组织的全局规则中心（从 `bytechainx/.github` 同步/复制的 Rust 与 Agent 规则 + 本 org 专用模板）。
+> 本目录是 **xhyperium** 组织的全局规则中心（SSOT）：语言规范、Agent 纪律、协作宪法、GitHub Ruleset 模板。
 
 ## 目录
 
 ```text
 rulesets/
-├── rust/                         # Rust 全局规范完整版 v2.1.0（SSOT）
-│   ├── RULES.md                  # 入口
-│   ├── security.md | async-runtime.md | testing.md | …
-├── agent-*.md                    # Agent 纪律 / 工作流 / 安全 …
-├── main-protection.json          # 分支保护模板
-├── release-tag-protection.json
-└── org-rust-pr-quality.ruleset.json  # 可选：org ruleset 要求 fmt/clippy/test
+├── agent-teams-constitution.md           # 最高治理（C/L/P）v2.9
+├── agent-teams-constitution-appendix.md  # 阈值 / ACL / 仲裁 / 变更日志
+├── agent-quality-gates.md                # 跨语言验证命令矩阵
+├── agent-*.md                            # 纪律 / 工作流 / 安全 / Teams / Codex …
+├── rust/                                 # Rust 全局规范完整版 v2.1.0
+│   └── RULES.md                          # 入口
+├── go/
+│   └── RULES.md                          # Go 薄规范 v0.1.0
+├── main-protection.json                  # 默认分支结构保护模板
+├── release-tag-protection.json           # v* tag 保护模板
+└── org-rust-pr-quality.ruleset.json      # 可选：Rust PR status checks（默认 disabled）
 ```
 
-## 1. Rust 项目必须显式引用
+## 层级关系
 
-每个 Rust 仓库的 `CONSTITUTION.md` / `docs/constitution/04-code-standards.md` / `AGENTS.md` 应声明：
+```text
+agent-teams-constitution.md     ← 最高原则 / 铁律 / 协作协议
+        ↓
+语言 SSOT（rust/ · go/）        ← 编码标准
+        ↓
+agent-discipline / workflow …   ← 执行与工作流
+        ↓
+agent-quality-gates.md          ← 验证命令（按语言）
+        ↓
+GitHub Ruleset JSON             ← 平台强制（导入后生效）
+```
+
+冲突时：**宪法 > 语言 P0 > Agent 操作规则 > 局部习惯**。
+
+## 1. 语言项目必须显式引用
+
+### Rust
 
 | 项 | 值 |
 |----|-----|
 | 上位 SSOT | `https://github.com/xhyperium/.github/tree/main/rulesets/rust` |
-| 入口 | `rulesets/rust/RULES.md` |
+| 入口 | `rulesets/rust/RULES.md`（v2.1.0） |
 | 关系 | 项目可加严，**不可削弱** P0 |
+
+### Go
+
+| 项 | 值 |
+|----|-----|
+| 组织入口 | `rulesets/go/RULES.md`（薄规范） |
+| 领域细则 | 各模块 CONSTITUTION / xlib_standard |
+| CI | `ci-standard.yml` / `ci-foundation.yml` |
 
 ## 2. Agent 机器一键分发
 
 ```bash
 curl -sSL https://raw.githubusercontent.com/xhyperium/.github/main/scripts/setup-global-rules.sh | bash
-# 或 HTTPS：
+# HTTPS：
 USE_HTTPS=1 bash <(curl -sSL https://raw.githubusercontent.com/xhyperium/.github/main/scripts/setup-global-rules.sh)
 ```
 
-效果：克隆/更新 `~/org-config` → symlink `~/.claude/rules/rust.md` 等。
+效果：克隆/更新 `~/org-config` → symlink 到 `~/.claude/rules/`（含宪法正文/附录、质量门禁、Rust/Go 入口）。
 
-## 3. 可复用 CI（Rust）
+## 3. 可复用 CI
 
-见 [`workflows/README.md`](../workflows/README.md)：
+见 [`../workflows/README.md`](../workflows/README.md)：
 
-- `ci-rust-standard.yml` — P1：fmt + clippy + test  
-- `ci-rust-foundation.yml` — P0：上者 + cargo deny  
+| 工作流 | 语言 | Tier |
+|--------|------|------|
+| `ci-rust-standard.yml` | Rust | P1：fmt + clippy + test |
+| `ci-rust-foundation.yml` | Rust | P0：+ doc + cargo deny（可关） |
+| `ci-standard.yml` | Go | P1 |
+| `ci-foundation.yml` | Go | P0 |
 
-（既有 `ci-standard.yml` / `ci-foundation.yml` 为 **Go** 模块门禁，勿与 Rust 混用。）
+## 4. Org Ruleset 模板（导入须谨慎）
 
-## 4. 可选：Org ruleset
+| 文件 | 用途 | 注意 |
+|------|------|------|
+| [`main-protection.json`](./main-protection.json) | 默认分支：须 PR、禁 force-push/删除 | **不**绑语言 status check（正确） |
+| [`release-tag-protection.json`](./release-tag-protection.json) | `v*` tag 保护 | 导入前核对 `bypass_actors` 的 team id |
+| [`org-rust-pr-quality.ruleset.json`](./org-rust-pr-quality.ruleset.json) | 强制 rust-fmt/clippy/test | **默认 `enforcement: disabled`**；`include` 为显式 Rust 仓列表，**禁止**对未接入 Rust CI 的仓启用 |
 
-模板：[`org-rust-pr-quality.ruleset.json`](./org-rust-pr-quality.ruleset.json)
+导入：GitHub → Organization settings → Rules → Rulesets，或 REST `POST /orgs/xhyperium/rulesets`。  
+与企业级 ruleset 冲突时先对齐，再 `active`。
 
-- 要求 status checks：`rust-fmt` / `rust-clippy` / `rust-test`
-- **前提**：目标仓库已接入 `ci-rust-*.yml` 且 check 名称一致
-- 需 **org owner** 在 GitHub → Organization settings → Rules → Rulesets 导入，或 REST `POST /orgs/xhyperium/rulesets`
-
-当前 org 可能已有 Enterprise 级 ruleset；导入前请与企业策略对齐，避免冲突。
-
-## 5. 与 bytechainx 的关系
+## 5. 与历史上游的关系
 
 | 源 | 角色 |
 |----|------|
-| `bytechainx/.github` | 历史/跨 org 上游副本 |
-| `xhyperium/.github` | **xhyperium 组织 SSOT（本仓）** |
+| `bytechainx/.github` 等 | 历史/跨 org 副本 |
+| **`xhyperium/.github`** | **本组织 SSOT** |
 
-同步建议：上游有重大修订时 `rsync`/`cp` rulesets/rust 并发 PR，勿在下游长期分叉削弱 P0。
+同步建议：上游有重大修订时对比 diff 后开 PR，勿在下游削弱 P0。宪法与 Agent 规则以本仓版本为准。
+
+## 6. 维护检查清单
+
+- [ ] 改 P0 规则走 PR
+- [ ] Rust 专题版本头与 `RULES.md` 主版本一致（当前 2.1.0）
+- [ ] 新增语言规范时更新 `setup-global-rules.sh` 与本 README
+- [ ] 相对 Markdown 链接可解析（本仓 `meta-validate` 会检查）

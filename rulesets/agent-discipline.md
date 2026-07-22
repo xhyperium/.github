@@ -23,7 +23,7 @@
 - 禁止把 "运行测试"、"lint 检查" 放进计划的 todo list
 - 验证是持续的、隐式的义务，不是可选的 checkbox
 - 声称代码完成前，**必须**先跑 test/build
-- 质量门禁三件套（fmt + clippy + test）是空气，不是任务
+- 质量门禁是空气，不是任务：按语言执行（见 [agent-quality-gates.md](./agent-quality-gates.md)），禁止写死只跑 cargo
 
 ## 4. 任务原子化（P1）
 
