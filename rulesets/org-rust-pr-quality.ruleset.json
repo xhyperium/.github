@@ -1,5 +1,5 @@
 {
-  "$schema_comment": "Org 级 Rust PR quality 规则（线上 SSOT，由 scripts/apply-org-ruleset.sh 经 DELETE+POST 应用）。仅对显式列出的、已接入 ci-rust-*.yml 的仓库强制 rust-fmt/clippy/test，不采用 ~ALL。status check 名须与 ci-rust-foundation.yml / ci-rust-standard.yml 的 job name 一致。enforcement=active。未接入的仓库（standard_template.rs / xhyper.rs）及无 CI 的仓库（ssot / knowledge）不在本规则 scope 内，避免其合并被卡死。",
+  "$schema_comment": "Org 级 Rust PR quality。modules 通过 jobs.org-rust.uses 调用可复用 workflow 时，GitHub 上报的 check 名为「调用方 job 名 / 被调用 job 名」，即 org-rust / rust-fmt 等（不是裸 rust-fmt）。仅对显式 include 的、已接入 ci-rust-org 的仓生效。enforcement=active。用 scripts/apply-org-ruleset.sh 应用到线上。",
   "name": "Rust PR quality (fmt/clippy/test)",
   "target": "branch",
   "enforcement": "active",
@@ -21,9 +21,9 @@
         "strict_required_status_checks_policy": false,
         "do_not_enforce_on_create": true,
         "required_status_checks": [
-          { "context": "rust-fmt" },
-          { "context": "rust-clippy" },
-          { "context": "rust-test" }
+          { "context": "org-rust / rust-fmt" },
+          { "context": "org-rust / rust-clippy" },
+          { "context": "org-rust / rust-test" }
         ]
       }
     }

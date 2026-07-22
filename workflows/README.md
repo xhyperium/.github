@@ -72,13 +72,26 @@ jobs:
 
 ### 状态检查名称（org ruleset）
 
-| Job name | 用途 |
-|----------|------|
-| `rust-fmt` | rustfmt |
-| `rust-clippy` | clippy -D warnings |
-| `rust-test` | cargo test |
-| `rust-doc` | cargo doc（仅 foundation，`run_doc`） |
-| `rust-deny` | cargo deny（仅 foundation，`run_deny`） |
+可复用 workflow 内 job 名为 `rust-fmt` 等。模块仓若通过包装 job 调用：
+
+```yaml
+jobs:
+  org-rust:
+    uses: xhyperium/.github/.github/workflows/ci-rust-foundation.yml@main
+```
+
+则 GitHub 上报的 **required check context** 为：
+
+| Context（ruleset 应写） | 含义 |
+|-------------------------|------|
+| `org-rust / rust-fmt` | rustfmt |
+| `org-rust / rust-clippy` | clippy -D warnings |
+| `org-rust / rust-test` | cargo test |
+| `org-rust / rust-doc` | cargo doc（foundation，`run_doc`） |
+| `org-rust / rust-deny` | cargo deny（foundation，`run_deny`） |
+
+> 勿在 org ruleset 写裸名 `rust-fmt`（包装调用后永远等不到）。  
+> 包装 job 名须与 ruleset 前缀一致（推荐统一 `org-rust`）。
 
 ## 规范引用
 

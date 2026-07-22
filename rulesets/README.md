@@ -84,7 +84,7 @@ USE_HTTPS=1 bash <(curl -sSL https://raw.githubusercontent.com/xhyperium/.github
 |------|-------------|------|------|
 | [`main-protection.json`](./main-protection.json) | **active** | `~ALL` 默认分支 | **结构门禁**：须走 PR、禁 force-push/删分支；**不**绑语言 status check；当前 `required_approving_review_count: 0` |
 | [`release-tag-protection.json`](./release-tag-protection.json) | **active** | `v*` tag · `~ALL` | 禁随意建/删/改 tag；bypass：OrgAdmin + maintainers team（**导入前核对 `actor_id`**） |
-| [`org-rust-pr-quality.ruleset.json`](./org-rust-pr-quality.ruleset.json) | **active** | 显式 include 仓列表 | **质量门禁**：`rust-fmt` / `rust-clippy` / `rust-test`（**无** doc/deny，有意） |
+| [`org-rust-pr-quality.ruleset.json`](./org-rust-pr-quality.ruleset.json) | **active** | 显式 include 仓列表 | **质量门禁**：`org-rust / rust-fmt` 等（见 workflows/README）（**无** doc/deny，有意） |
 
 ### 叠加语义
 
