@@ -1,15 +1,25 @@
 name: "xhyperium CodeQL configuration"
 version: 2
 
-# Disable default queries — repos define queries in their own codeql.yml
+# Repos may still pin their own queries in codeql.yml; this is the org baseline.
 disable-default-queries: false
 
-# Path filters to exclude vendored and generated code
+# Path filters: exclude vendored, generated, agent/worktree scratch, and build output
 paths-ignore:
   - "**/*_test.go"
   - "vendor/**"
+  - "node_modules/**"
+  - "target/**"
+  - "dist/**"
+  - "build/**"
   - ".worktree/**"
+  - ".worktrees/**"
   - ".omx/**"
+  - ".omc/**"
+  - ".swarm/**"
+  - "**/*.pb.go"
+  - "**/*_gen.go"
+  - "**/generated/**"
 
 queries:
   - uses: security-and-quality

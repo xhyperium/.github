@@ -6,7 +6,7 @@
 
 ```text
 rulesets/
-├── rust/                         # Rust 全局规范完整版 v2.0（SSOT）
+├── rust/                         # Rust 全局规范完整版 v2.1.0（SSOT）
 │   ├── RULES.md                  # 入口
 │   ├── security.md | async-runtime.md | testing.md | …
 ├── agent-*.md                    # Agent 纪律 / 工作流 / 安全 …

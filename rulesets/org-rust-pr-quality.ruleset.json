@@ -1,5 +1,5 @@
 {
-  "$schema_comment": "可选：Org repository ruleset 模板 — 要求 PR 必过 rust-fmt / rust-clippy / rust-test。需 org admin 在 GitHub UI 或 REST API 导入；status check 名须与 ci-rust-*.yml job name 一致。",
+  "$schema_comment": "可选：Org repository ruleset 模板 — 要求 PR 必过 rust-fmt / rust-clippy / rust-test（与 ci-rust-standard 对齐）。Foundation 额外的 rust-doc / rust-deny 请按仓库 ruleset 单独加，勿默认绑全 org。需 org admin 导入；check 名须与 job name 一致。",
   "name": "Rust PR quality (fmt/clippy/test)",
   "target": "branch",
   "enforcement": "active",

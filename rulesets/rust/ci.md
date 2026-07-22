@@ -2,7 +2,8 @@
 
 > 适用范围：所有 Rust 项目  
 > 上位文档：[RULES.md](./RULES.md) §3  
-> 版本：2.0.0
+> 版本：2.1.0  
+> 组织可复用实现：`xhyperium/.github` → `ci-rust-standard.yml`（P1）/ `ci-rust-foundation.yml`（P0，含 doc + deny）
 
 ---
 

@@ -49,14 +49,19 @@ on:
 permissions:
   contents: read
 
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: "1"
+
 jobs:
   rust-fmt:
     name: rust-fmt
     runs-on: ${{ inputs.runs_on }}
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - name: 安装 Rust
-        uses: dtolnay/rust-toolchain@master
+        uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: ${{ inputs.rust_toolchain }}
           components: rustfmt
@@ -66,14 +71,17 @@ jobs:
   rust-clippy:
     name: rust-clippy
     runs-on: ${{ inputs.runs_on }}
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - name: 安装 Rust
-        uses: dtolnay/rust-toolchain@master
+        uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: ${{ inputs.rust_toolchain }}
           components: clippy
       - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: clippy-${{ inputs.rust_toolchain }}
       - name: cargo clippy
         run: >
           cargo clippy --workspace --all-targets --all-features
@@ -83,13 +91,16 @@ jobs:
   rust-test:
     name: rust-test
     runs-on: ${{ inputs.runs_on }}
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
       - name: 安装 Rust
-        uses: dtolnay/rust-toolchain@master
+        uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: ${{ inputs.rust_toolchain }}
       - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: test-${{ inputs.rust_toolchain }}
       - name: cargo test
         run: >
           cargo test --workspace --all-targets --all-features
