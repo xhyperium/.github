@@ -2,9 +2,11 @@
 
 > 适用范围：所有 Agent 会话（xhyperium · 默认 Rust）  
 > 级别：P0（验证义务）  
-> 互补： [agent-discipline.md](./agent-discipline.md) · [agent-teams.md](./agent-teams.md) · [rust/RULES.md](./rust/RULES.md)
+> 互补： [agent-discipline.md](./agent-discipline.md) · [self-verification.md](./self-verification.md) · [agent-teams.md](./agent-teams.md) · [rust/RULES.md](./rust/RULES.md)
 
 xhyperium 组织默认语言为 **Rust**。声称完成前必须有 fresh 的 fmt / clippy / test 证据。
+
+完成声明的**动作序列**（自查 → 比对 → 双重确认）见 [self-verification.md](./self-verification.md)；本文件只规定**跑什么命令**。
 
 ---
 
@@ -16,6 +18,7 @@ xhyperium 组织默认语言为 **Rust**。声称完成前必须有 fresh 的 fm
 | 验证是隐式义务 | 不要把「跑测试」当成可选 todo checkbox |
 | 按变更范围收窄 | 优先 crate 级命令，全 workspace 慢测放交付前 |
 | 展示证据 | 贴命令与关键输出，禁止口头「应该过了」 |
+| 双重确认 | 声明完成前须**本轮新执行**一条可推翻结论的复验命令（见 self-verification 关卡三） |
 
 ---
 
