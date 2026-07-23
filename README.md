@@ -132,6 +132,8 @@ USE_HTTPS=1 bash <(curl -sSL https://raw.githubusercontent.com/xhyperium/.github
 
 效果：克隆/更新 `~/org-config` → 将 `rulesets` 软链到 `~/.claude/rules/`。
 
+**自动更新**：SessionStart 经 `_loader.sh` 调用 `sync-org-rules.sh`，默认每 **6 小时**在 `main` 干净工作区上 `ff-only` 拉取最新规则。关闭：`ORG_RULES_AUTO_UPDATE=0`。详见 [rulesets/README.md §2](./rulesets/README.md)。
+
 ### 将 Ruleset 应用到 GitHub 组织（线上）
 
 ```bash

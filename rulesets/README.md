@@ -25,7 +25,8 @@ rulesets/
 | 脚本 | 用途 |
 |------|------|
 | [`setup-global-rules.sh`](../scripts/setup-global-rules.sh) | 克隆/更新 SSOT → symlink `~/.claude/rules/` + 安装 SessionStart loader |
-| [`claude-rules-loader.sh`](../scripts/claude-rules-loader.sh) | SessionStart 重建常驻 symlink（与 setup 清单对齐，避免被抹掉） |
+| [`claude-rules-loader.sh`](../scripts/claude-rules-loader.sh) | SessionStart：节流同步 + 重建常驻 symlink（与 setup 清单对齐） |
+| [`sync-org-rules.sh`](../scripts/sync-org-rules.sh) | 节流 `git pull --ff-only`（默认 **6h**；main + 干净工作区才更新） |
 | [`apply-org-ruleset.sh`](../scripts/apply-org-ruleset.sh) | 将 JSON **应用到线上** org ruleset（DELETE+POST；本环境 PATCH 不可用） |
 
 ## 层级关系
@@ -91,6 +92,33 @@ USE_HTTPS=1 bash <(curl -sSL https://raw.githubusercontent.com/xhyperium/.github
 
 `self-verification.md` 与纪律/安全/质量门禁互补：后三者要求「要验证」「要有证据」，前者规定**声明完成前必须经过的固定动作序列**。  
 `claude-rules-loader.sh` 与 `setup-global-rules.sh` 共用常驻清单，SessionStart 不会再抹掉 teams/codex/routing。
+
+### 自动更新（SessionStart · 默认开启）
+
+SessionStart 调用 loader 时，会先跑 [`sync-org-rules.sh`](../scripts/sync-org-rules.sh)：
+
+| 项 | 默认 |
+|----|------|
+| 间隔 | **6 小时**（戳记 `~/.claude/rules/.last-org-sync`） |
+| 条件 | `~/org-config` 在 **main** 且 **工作区干净** |
+| 动作 | `git fetch` + `pull --ff-only origin main`（**绝不** `reset --hard`） |
+| 失败 | fail-open，不阻断会话 |
+
+| 环境变量 | 作用 |
+|----------|------|
+| `ORG_RULES_AUTO_UPDATE=0` | 关闭自动同步（同 `INFRA_ORG_RULES_AUTO_UPDATE=0`） |
+| `ORG_RULES_SYNC_INTERVAL_HOURS=6` | 节流间隔（小时，正整数） |
+| `ORG_RULES_SYNC_FORCE=1` | 忽略戳记强制尝试同步（仍要求 main + 干净） |
+| `ORG_RULES_SYNC_QUIET=0` | 打开同步日志（SessionStart 默认 quiet） |
+
+手动立即同步：
+
+```bash
+ORG_RULES_SYNC_FORCE=1 ORG_RULES_SYNC_QUIET=0 bash ~/org-config/scripts/sync-org-rules.sh
+bash ~/.claude/rules/_loader.sh
+```
+
+**注意**：GitHub Org Ruleset 线上策略仍须 `apply-org-ruleset.sh`，不会随本同步自动变更。
 
 ## 3. 可复用 CI
 

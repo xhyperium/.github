@@ -9,6 +9,7 @@
 # 2. 优先 ~/org-config/rulesets（组织 SSOT），不以 available/ 覆盖核心规则
 # 3. 只 unlink 本脚本管理的目标名；不删除真实文件
 # 4. fail-open：任何错误不阻断会话（由调用方 `|| true` 兜底；本脚本也尽量不 exit 非 0）
+# 5. SessionStart 前节流同步 SSOT（默认 6h，见 sync-org-rules.sh）
 
 set -u
 
@@ -17,8 +18,25 @@ ORG_CONFIG_DIR="${ORG_CONFIG_DIR:-${HOME}/org-config}"
 ORG_RULES="${ORG_CONFIG_DIR}/rulesets"
 AVAILABLE="${RULES_DIR}/available"
 PROJECT_DIR="${CLAUDE_PROJECT_DIR:-$(pwd)}"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" 2>/dev/null && pwd || true)"
 
 mkdir -p "${RULES_DIR}" 2>/dev/null || true
+
+# --- 节流自动同步（fail-open；默认 6 小时）---
+# 关闭：ORG_RULES_AUTO_UPDATE=0 或 INFRA_ORG_RULES_AUTO_UPDATE=0
+# 强制：ORG_RULES_SYNC_FORCE=1
+# 间隔：ORG_RULES_SYNC_INTERVAL_HOURS=6
+_sync_script=""
+if [[ -n "${SCRIPT_DIR}" && -f "${SCRIPT_DIR}/sync-org-rules.sh" ]]; then
+  _sync_script="${SCRIPT_DIR}/sync-org-rules.sh"
+elif [[ -f "${ORG_CONFIG_DIR}/scripts/sync-org-rules.sh" ]]; then
+  _sync_script="${ORG_CONFIG_DIR}/scripts/sync-org-rules.sh"
+fi
+if [[ -n "${_sync_script}" ]]; then
+  ORG_RULES_SYNC_QUIET="${ORG_RULES_SYNC_QUIET:-1}" \
+    bash "${_sync_script}" 2>/dev/null || true
+fi
+unset _sync_script
 
 link_from_org() {
   local rel="$1"   # rulesets 下相对路径，如 language.md 或 rust/RULES.md
