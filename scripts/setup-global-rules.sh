@@ -26,7 +26,7 @@ else
 fi
 
 echo -e "${BLUE}╔══════════════════════════════════════╗${NC}"
-echo -e "${BLUE}║  xhyperium 全局规则初始化 v1.5       ║${NC}"
+echo -e "${BLUE}║  xhyperium 全局规则初始化 v1.6       ║${NC}"
 echo -e "${BLUE}╚══════════════════════════════════════╝${NC}"
 echo ""
 echo -e "  SSOT: ${REPO_URL}"
@@ -93,6 +93,7 @@ link_rule "${ORG_CONFIG_DIR}/rulesets/agent-discipline.md" "${CLAUDE_RULES_DIR}/
 link_rule "${ORG_CONFIG_DIR}/rulesets/agent-workflow.md" "${CLAUDE_RULES_DIR}/agent-workflow.md" "Agent 工作流编排"
 link_rule "${ORG_CONFIG_DIR}/rulesets/agent-safety.md" "${CLAUDE_RULES_DIR}/agent-safety.md" "Agent 安全护栏"
 link_rule "${ORG_CONFIG_DIR}/rulesets/agent-context.md" "${CLAUDE_RULES_DIR}/agent-context.md" "Agent 上下文管理"
+link_rule "${ORG_CONFIG_DIR}/rulesets/self-verification.md" "${CLAUDE_RULES_DIR}/self-verification.md" "自验证机制（完成声明三关卡）"
 link_rule "${ORG_CONFIG_DIR}/rulesets/agent-teams.md" "${CLAUDE_RULES_DIR}/agent-teams.md" "Agent Teams"
 link_rule "${ORG_CONFIG_DIR}/rulesets/agent-codex.md" "${CLAUDE_RULES_DIR}/agent-codex.md" "Agent Codex"
 link_rule "${ORG_CONFIG_DIR}/rulesets/agent-model-routing.md" "${CLAUDE_RULES_DIR}/agent-model-routing.md" "Agent 模型路由"

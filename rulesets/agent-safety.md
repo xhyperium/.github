@@ -15,6 +15,7 @@
   - "It should pass" → 应该 ≠ 实际
   - "I just ran it" → 展示输出
 - 验证五步：识别命令 → 执行 → 读输出 → 确认匹配 → 声明完成
+- **完成声明协议**详见 [self-verification.md](./self-verification.md)（自查清单 → 结果比对 → 双重确认）；「I just ran it」必须附带**本轮新执行**的复验输出
 
 ## 2. 先读后改（P0）
 
