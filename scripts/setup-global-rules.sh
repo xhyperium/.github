@@ -26,7 +26,7 @@ else
 fi
 
 echo -e "${BLUE}╔══════════════════════════════════════╗${NC}"
-echo -e "${BLUE}║  xhyperium 全局规则初始化 v1.5       ║${NC}"
+echo -e "${BLUE}║  xhyperium 全局规则初始化 v1.6       ║${NC}"
 echo -e "${BLUE}╚══════════════════════════════════════╝${NC}"
 echo ""
 echo -e "  SSOT: ${REPO_URL}"
@@ -93,6 +93,8 @@ link_rule "${ORG_CONFIG_DIR}/rulesets/agent-discipline.md" "${CLAUDE_RULES_DIR}/
 link_rule "${ORG_CONFIG_DIR}/rulesets/agent-workflow.md" "${CLAUDE_RULES_DIR}/agent-workflow.md" "Agent 工作流编排"
 link_rule "${ORG_CONFIG_DIR}/rulesets/agent-safety.md" "${CLAUDE_RULES_DIR}/agent-safety.md" "Agent 安全护栏"
 link_rule "${ORG_CONFIG_DIR}/rulesets/agent-context.md" "${CLAUDE_RULES_DIR}/agent-context.md" "Agent 上下文管理"
+link_rule "${ORG_CONFIG_DIR}/rulesets/self-verification.md" "${CLAUDE_RULES_DIR}/self-verification.md" "自验证机制（完成声明三关卡）"
+link_rule "${ORG_CONFIG_DIR}/rulesets/autonomous-iteration.md" "${CLAUDE_RULES_DIR}/autonomous-iteration.md" "自主迭代（Scope/Metric/Verify/Guard）"
 link_rule "${ORG_CONFIG_DIR}/rulesets/agent-teams.md" "${CLAUDE_RULES_DIR}/agent-teams.md" "Agent Teams"
 link_rule "${ORG_CONFIG_DIR}/rulesets/agent-codex.md" "${CLAUDE_RULES_DIR}/agent-codex.md" "Agent Codex"
 link_rule "${ORG_CONFIG_DIR}/rulesets/agent-model-routing.md" "${CLAUDE_RULES_DIR}/agent-model-routing.md" "Agent 模型路由"
@@ -108,10 +110,39 @@ link_rule "${ORG_CONFIG_DIR}/rulesets/rust/clippy.md" "${CLAUDE_RULES_DIR}/rust-
 link_rule "${ORG_CONFIG_DIR}/rulesets/rust/observability.md" "${CLAUDE_RULES_DIR}/rust-observability.md" "Rust observability"
 link_rule "${ORG_CONFIG_DIR}/rulesets/rust/release.md" "${CLAUDE_RULES_DIR}/rust-release.md" "Rust release"
 
+# SessionStart loader：与上方常驻清单同源，避免「setup 装上 → loader 抹掉」
+if [[ -f "${ORG_CONFIG_DIR}/scripts/claude-rules-loader.sh" ]]; then
+  chmod +x "${ORG_CONFIG_DIR}/scripts/claude-rules-loader.sh" 2>/dev/null || true
+  ln -sfn "${ORG_CONFIG_DIR}/scripts/claude-rules-loader.sh" "${CLAUDE_RULES_DIR}/_loader.sh"
+  echo -e "  ${GREEN}✅ SessionStart loader (_loader.sh → claude-rules-loader.sh)${NC}"
+else
+  echo -e "  ${YELLOW}⏭  跳过 SessionStart loader（源不存在）${NC}"
+fi
+
 echo ""
 echo -e "${BLUE}📋 验证：${CLAUDE_RULES_DIR}${NC}"
 # shellcheck disable=SC2012
 ls -la "${CLAUDE_RULES_DIR}"/*.md 2>/dev/null || true
+
+# 关键常驻项存在性门禁（fail 提示，不阻断；CI meta 可另做硬门禁）
+REQUIRED_RULES=(
+  language.md
+  agent-teams-constitution.md
+  agent-discipline.md
+  agent-safety.md
+  self-verification.md
+  rust/RULES.md
+)
+MISSING=0
+for rel in "${REQUIRED_RULES[@]}"; do
+  if [[ ! -f "${ORG_CONFIG_DIR}/rulesets/${rel}" ]]; then
+    echo -e "  ${RED}✗ 缺少关键规则: rulesets/${rel}${NC}"
+    MISSING=$((MISSING + 1))
+  fi
+done
+if [[ "${MISSING}" -eq 0 ]]; then
+  echo -e "  ${GREEN}✅ 关键常驻规则文件齐全${NC}"
+fi
 
 RULE_COUNT="$(find "${ORG_CONFIG_DIR}/rulesets" -name '*.md' 2>/dev/null | wc -l | tr -d ' ')"
 echo ""

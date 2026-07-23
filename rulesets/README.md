@@ -10,6 +10,8 @@ rulesets/
 ├── agent-teams-constitution.md           # 最高治理（C/L/P）v2.9
 ├── agent-teams-constitution-appendix.md  # 阈值 / ACL / 仲裁 / 变更日志 v2.9
 ├── agent-quality-gates.md                # 验证命令矩阵（Rust）
+├── self-verification.md                  # 完成声明三关卡（自查 → 比对 → 双重确认）
+├── autonomous-iteration.md               # 自主迭代：Scope / Metric / Verify / Guard
 ├── agent-*.md                            # 纪律 / 工作流 / 安全 / Teams / Codex …
 ├── rust/                                 # Rust 全局规范完整版 v2.1.1
 │   └── RULES.md                          # 入口
@@ -22,7 +24,8 @@ rulesets/
 
 | 脚本 | 用途 |
 |------|------|
-| [`setup-global-rules.sh`](../scripts/setup-global-rules.sh) | 克隆/更新 SSOT → symlink `~/.claude/rules/` |
+| [`setup-global-rules.sh`](../scripts/setup-global-rules.sh) | 克隆/更新 SSOT → symlink `~/.claude/rules/` + 安装 SessionStart loader |
+| [`claude-rules-loader.sh`](../scripts/claude-rules-loader.sh) | SessionStart 重建常驻 symlink（与 setup 清单对齐，避免被抹掉） |
 | [`apply-org-ruleset.sh`](../scripts/apply-org-ruleset.sh) | 将 JSON **应用到线上** org ruleset（DELETE+POST；本环境 PATCH 不可用） |
 
 ## 层级关系
@@ -37,6 +40,8 @@ agent-teams-constitution.md     ← 最高原则 / 铁律 / 协作协议
 agent-discipline / workflow …   ← 执行与工作流
         ↓
 agent-quality-gates.md          ← 验证命令（Rust）
+        ↓
+self-verification.md            ← 完成声明三关卡（自查 → 比对 → 双重确认）
         ↓
 GitHub Ruleset JSON             ← 平台强制（git 合并 ≠ 线上生效，需 apply）
 ```
@@ -67,7 +72,25 @@ curl -sSL https://raw.githubusercontent.com/xhyperium/.github/main/scripts/setup
 USE_HTTPS=1 bash <(curl -sSL https://raw.githubusercontent.com/xhyperium/.github/main/scripts/setup-global-rules.sh)
 ```
 
-效果：克隆/更新 `~/org-config` → symlink 到 `~/.claude/rules/`（宪法、质量门禁、Rust 入口与常用专题）。
+效果：克隆/更新 `~/org-config` → symlink 到 `~/.claude/rules/`（宪法、质量门禁、自验证、Rust 入口与常用专题）。
+
+### 始终加载的 Agent 规则（摘要）
+
+| 文件 | 职责 |
+|------|------|
+| `language.md` | 人类可读文本强制中文（P0） |
+| `agent-teams-constitution.md` (+ appendix) | 最高原则 / 铁律 / 协作协议 |
+| `agent-quality-gates.md` | 验证命令矩阵（默认 Rust） |
+| `agent-discipline.md` | 执行纪律：说了就做、隐式验证、任务原子化 |
+| `agent-safety.md` | 安全护栏：证据优先、先读后改、三击升级 |
+| `agent-workflow.md` | 工作流编排、worktree、任务闭环 |
+| `agent-context.md` | 上下文管理、文件即状态 |
+| **`self-verification.md`** | **完成声明三关卡**：自查清单 → 结果比对 → 双重确认（强制） |
+| `autonomous-iteration.md` | 编码迭代：Scope / Metric / Verify / Guard |
+| `agent-teams.md` / `agent-codex.md` / `agent-model-routing.md` | 协作与路由 |
+
+`self-verification.md` 与纪律/安全/质量门禁互补：后三者要求「要验证」「要有证据」，前者规定**声明完成前必须经过的固定动作序列**。  
+`claude-rules-loader.sh` 与 `setup-global-rules.sh` 共用常驻清单，SessionStart 不会再抹掉 teams/codex/routing。
 
 ## 3. 可复用 CI
 

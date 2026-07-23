@@ -33,6 +33,7 @@
 - 验证是持续的、隐式的义务，不是可选的 checkbox
 - 声称代码完成前，**必须**先跑 test/build
 - 质量门禁是空气，不是任务：以 [agent-quality-gates.md](./agent-quality-gates.md) 为准（组织默认 Rust：fmt + clippy + test）
+- **完成声明**必须走 [self-verification.md](./self-verification.md) 三道关卡（自查清单 → 结果比对 → 双重确认）；禁止用「刚才跑过」代替独立复验
 
 ## 4. 任务原子化（P1）
 
