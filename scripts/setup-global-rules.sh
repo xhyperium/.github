@@ -26,7 +26,7 @@ else
 fi
 
 echo -e "${BLUE}╔══════════════════════════════════════╗${NC}"
-echo -e "${BLUE}║  xhyperium 全局规则初始化 v1.6       ║${NC}"
+echo -e "${BLUE}║  xhyperium 全局规则初始化 v1.7       ║${NC}"
 echo -e "${BLUE}╚══════════════════════════════════════╝${NC}"
 echo ""
 echo -e "  SSOT: ${REPO_URL}"
@@ -110,7 +110,13 @@ link_rule "${ORG_CONFIG_DIR}/rulesets/rust/clippy.md" "${CLAUDE_RULES_DIR}/rust-
 link_rule "${ORG_CONFIG_DIR}/rulesets/rust/observability.md" "${CLAUDE_RULES_DIR}/rust-observability.md" "Rust observability"
 link_rule "${ORG_CONFIG_DIR}/rulesets/rust/release.md" "${CLAUDE_RULES_DIR}/rust-release.md" "Rust release"
 
-# SessionStart loader：与上方常驻清单同源，避免「setup 装上 → loader 抹掉」
+# SessionStart loader + 节流同步脚本（与常驻清单同源）
+if [[ -f "${ORG_CONFIG_DIR}/scripts/sync-org-rules.sh" ]]; then
+  chmod +x "${ORG_CONFIG_DIR}/scripts/sync-org-rules.sh" 2>/dev/null || true
+  echo -e "  ${GREEN}✅ 自动同步脚本 (sync-org-rules.sh，默认 6h 节流)${NC}"
+else
+  echo -e "  ${YELLOW}⏭  跳过 sync-org-rules.sh（源不存在）${NC}"
+fi
 if [[ -f "${ORG_CONFIG_DIR}/scripts/claude-rules-loader.sh" ]]; then
   chmod +x "${ORG_CONFIG_DIR}/scripts/claude-rules-loader.sh" 2>/dev/null || true
   ln -sfn "${ORG_CONFIG_DIR}/scripts/claude-rules-loader.sh" "${CLAUDE_RULES_DIR}/_loader.sh"
@@ -149,5 +155,7 @@ echo ""
 echo -e "${GREEN}╔══════════════════════════════════════╗${NC}"
 echo -e "${GREEN}║  全局规则配置完成                    ║${NC}"
 echo -e "${GREEN}║  规则文件约 ${RULE_COUNT} 篇                      ║${NC}"
-echo -e "${GREEN}║  更新: cd ~/org-config && git pull   ║${NC}"
+echo -e "${GREEN}║  更新: SessionStart 每 6h 自动同步    ║${NC}"
+echo -e "${GREEN}║  手动: cd ~/org-config && git pull   ║${NC}"
+echo -e "${GREEN}║  关闭: ORG_RULES_AUTO_UPDATE=0         ║${NC}"
 echo -e "${GREEN}╚══════════════════════════════════════╝${NC}"
